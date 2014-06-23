@@ -70,7 +70,7 @@ endif ()
 # plugins with dependencies
 #
 set (PLUGINS_LIST_DEP
-	yajl dbus tcl xmltool
+	yajl dbus tcl xmltool augeas
 	)
 
 #
@@ -211,10 +211,10 @@ else (BUILD_TESTING)
 	set (INSTALL_TESTING OFF CACHE BOOL "Install testcases" FORCE)
 endif (BUILD_TESTING)
 
-option (BUILD_SWIG "Enable SWIG generated bindings" OFF)
+option (BUILD_SWIG "Enable SWIG generated bindings" ON)
 if (BUILD_SWIG)
-	option (BUILD_SWIG_PYTHON "Enable the SWIG bindings for Python" OFF)
-	option (BUILD_SWIG_LUA    "Enable the SWIG bindings for Lua" OFF)
+	option (BUILD_SWIG_PYTHON "Enable the SWIG bindings for Python" ON)
+	option (BUILD_SWIG_LUA    "Enable the SWIG bindings for Lua" ON)
 else (BUILD_SWIG)
 	set (BUILD_SWIG_PYTHON OFF CACHE BOOL "Enable the SWIG bindings for Python" FORCE)
 	set (BUILD_SWIG_LUA    OFF CACHE BOOL "Enable the SWIG bindings for Lua" FORCE)
