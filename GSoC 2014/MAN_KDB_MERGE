@@ -1,0 +1,31 @@
+kdb merge [options] basepath ourpath theirpath mergepath
+
+Completes a three-way merge between keysets and saves the resulting keyset to mergepath
+
+mergepath .. path where the merged keyset should be saved
+ourpath .. path to the keyset to serve as ours
+theirpath .. path to the keyset to serve as theirs
+basepath .. path to the base keyset
+
+-H --help                print help text
+-I --interactive         interactive mode to manually merge
+-Q --quiet		 user will not be prompted, if conflicts exist, merge will fail
+-O --ours		 conflicts will default to our keyset
+-T --theirs		 conflicts will default to their keyset
+-V --version             print version info
+
+MERGE STRATEGIES
+
+ours
+	This method favors our  version of a key when a conflict exists during a merge.  When a change exists between their and base, their's key will be used when there is no conflict between our and their. 
+
+theirs
+	This works just like ours, but favors theirs. 
+
+HOW TO RESOLVE CONFLICTS
+
+If a conflict occurs, the user will be promted on how to handle it. There will be two options:
+	1) Abort the merge. This option will allow the user to stop the merge process and will leave the child and base keysets alone.
+	2) Resolve the conflicts. If the user selects this option they will be given another menu on how to proceed.
+		a) List keys with conflicts. This option will display a list of the keys that cause conflicts in the merge, from here a user could manually resolve conflicts in those keys and then reattempt the merge.
+		b) Work through the merge. This option would list the keys needing to be manually merge, after a confirmation, the user would be prompted to work through each merge one by one. After they are done, the merge will be completed. 

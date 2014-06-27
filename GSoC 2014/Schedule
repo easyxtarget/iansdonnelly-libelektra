@@ -1,0 +1,36 @@
+Module 1: kdb merge: May 19th - June 27th 
+•	Basic three-way merge of KeySets: By June 6th
+•	Fix common errors of three-way merge: By May June 13th 
+•	Handle all situations of merge, identify when KeySets can’t be merged: By June 20th 
+•	Finish kdb merge tool that can merge two children EKSs and an origin EKS, with fall options outlined in the kdb merge man page: By June 27th
+
+ 
+Module 2: Applying to Package Upgrades: June 30th – August 1st 
+•	Identify packages: By June 6th 
+•	Create lens for configuration file: By July 6th 
+•	Work on correctly mounting configuration files: By July 17th 
+•	kdb merge should correctly merge config files in all scenarios: By August 1st 
+
+
+STUFFF FROM THE MEETING
+Next Week: Test merge code, move it to the right place. Write automated test and fix bugs.
+
+TAB COMPLETION
+
+Elektra packaging
+Package augeas_plugin from elektra
+Use augeas from unstable repo
+Have augeas
+lintian checks improve
+kdb man page
+
+Python lua bindings if time
+
+Also talk to Felix about package config moutning and understand it.
+
+Begin package tolerance
+
+Till the 20th:
+Begin working with package configuration and testing it with the merge.
+
+HAVE PROTOTYPE WORKING BY THE 23RD, AUTOMATIC MERGE ON UPGRADE FOR BASIC PACKAGE
