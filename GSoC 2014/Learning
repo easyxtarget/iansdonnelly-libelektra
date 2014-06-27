@@ -11,4 +11,4 @@ May 28
 I am figuring out which key and keyset functions work for kdb and what the functions do and what they return. For instance, I now understand how to use ks.next() to get the next key in the keyset (the next that would be listed with the kdb ls command). I also understand that key.getName() returns the path of the key in a string. 
 
 Week 6:
-I have been studying how to patch dpkg to automatically attempt a merge on conffiles. I have been looking at the dpkg source and have determined that src/configure.c is the code for the current system which prompts the user what to do when there is a conflict with mergefiles. I still have to look into where the function in this file are called and read up more about the inter-workings of dpkg.
+I have been studying how to patch dpkg to automatically attempt a merge on conffiles. I have been looking at the dpkg source and have determined that src/configure.c is the code for the current system which prompts the user what to do when there is a conflict with mergefiles. 
