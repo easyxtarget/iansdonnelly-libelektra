@@ -42,6 +42,9 @@ public:
 	void setKeySet(ckdb::KeySet * k);
 
 	KeySet& operator=(KeySet const& other);
+	
+	bool operator==(KeySet const& other);
+	bool operator!=(KeySet const& other);
 
 	ssize_t size() const;
 
@@ -473,6 +476,44 @@ inline KeySet& KeySet::operator=(KeySet const& other)
 		ks = other.dup();
 	}
 	return *this;
+}
+
+inline bool KeySet::operator==(KeySet const& other)
+{
+	if((this->size()) != (other.size()))
+		return false;
+	this->rewind();
+	other.rewind();
+	Key k1;
+	Key k2;
+	while(k1=this->next()){
+		k2=other.next();
+		if(k1.getName() != k2.getName()){
+			return false;
+		}
+		else if(k1.getString() != k2.getString())
+			return false;
+	}
+	return true;
+}
+
+inline bool KeySet::operator!=(KeySet const& other)
+{
+	if((this->size()) == (other.size()))
+		return false;
+	this->rewind();
+	other.rewind();
+	Key k1;
+	Key k2;
+	while(k1=this->next()){
+		k2=other.next();
+		if(k1.getName() == k2.getName()){
+			return false;
+		}
+		else if(k1.getString() == k2.getString())
+			return false;
+	}
+	return true;
 }
 
 /**
