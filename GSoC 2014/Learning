@@ -1,0 +1,14 @@
+This file will contain things I am learning about Elektra during my project.
+
+Week 1:
+So I have been reading the elektra documentation for Keys and KeySets online as well as looking through the source files and I am learning some things.
+For my ksmerge implimentation I plan to iterate though KeySets using ksHead, ksTail, ksCurrent, and ksNext. I am writing two fucntions, one to determine if two keys are equal (from a merge standpoint) and a similar fucntion for keysets. To compare the keys I was looking at using keyValue but I'm not sure if that is a better solution than keyGetString and keySetString. I have to look more into binary keys though to see how I can make kdbmerge compatible with all keysets. 
+
+Additionally, I just figured out how to include kdb.h and support for keys in my merge. Somehow I guess I missed the src/tools/kdb folder. This is the first time I have worked on such a large project and its much more complicated to view such a large project from a top-level view then I am used to. I feel like I am starting to get a good understanding of elektra now and how all of the parts of elektra interact (especially kdb and the actual elektra library). 
+
+Week 2:
+May 28
+I am figuring out which key and keyset functions work for kdb and what the functions do and what they return. For instance, I now understand how to use ks.next() to get the next key in the keyset (the next that would be listed with the kdb ls command). I also understand that key.getName() returns the path of the key in a string. 
+
+Week 6:
+I have been studying how to patch dpkg to automatically attempt a merge on conffiles. I have been looking at the dpkg source and have determined that src/configure.c is the code for the current system which prompts the user what to do when there is a conflict with mergefiles. 
