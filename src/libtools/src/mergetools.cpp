@@ -1,3 +1,12 @@
+/**
+ * \file
+ *
+ * \brief Implementation of mergetools
+ *
+ * \copyright BSD License (see doc/COPYING or http://www.libelektra.org)
+ *
+ */
+
 #include <mergetools.hpp>
 
 #include <kdb.hpp>
@@ -16,7 +25,9 @@ namespace tools{
 Merge::Merge()
 {}
 
-//This function returns the path of a key (fullname - basename).
+/**
+ * Returns the path of a key (fullname - basename).
+ */
 string Merge::getPath(const kdb::Key& key){
 	unsigned found;
 	string path;
@@ -25,7 +36,10 @@ string Merge::getPath(const kdb::Key& key){
 	return path;
 }
 
-//This function determines if two keys are equal based on their GetString() values.
+/**
+ * Determines if two keys are equal based on their GetString() values.
+ * Returns true if they are equal. False if they are not.
+ */
 bool Merge::KeyEqual(const kdb::Key& k1, const kdb::Key& k2){
 	if(k1.getString() != k2.getString()){
 		return false;
@@ -33,7 +47,10 @@ bool Merge::KeyEqual(const kdb::Key& k1, const kdb::Key& k2){
 	return true;
 }
 
-//KeySetEqual checks the size of each keyset and the names of the keys as well as their content (by using KeyEqual). If two keysets are equal if and only if they have the same keys (determined by name and their string vlaue).
+/**
+ * Determines if two KeySets are equal.
+ * KeySets are considered equal if they are the same size and both keysets have the same keys determined by their name and KeyEqual.
+ */
 bool Merge::KeySetEqual(const kdb::KeySet& ks1, const kdb::KeySet& ks2){
 	if((ks1.size()) != (ks2.size()))
 		return false;
@@ -53,7 +70,12 @@ bool Merge::KeySetEqual(const kdb::KeySet& ks1, const kdb::KeySet& ks2){
 	return true;
 }
 
-//This function merges two keysets (ours and theirs) using a base keyset as a refernece (a three-way merge). The merged keyset will be returned. If the merge function is unscuessfull and empty KeySet will be returned. This function is inteded as a full version for the kdb merge command or for the C++ API. It takes in three keysets, their parent keys and a parent key for where to store the merged KeySet.
+/**
+ * Returns a keyset that is the result of a merge on two keysets (ours and theirs) using a base keyset as a refernece (a three-way merge). 
+ * If the merge function is unscuessful an empty KeySet will be returned. 
+ * This function is inteded as a full version for the kdb merge command or for  the C++ API. 
+ * It works by taking in three keysets, their parent keys and a parent key for where to store the merged KeySet.
+**/
 kdb::KeySet Merge::KeySetMerge(const kdb::KeySet& base, const kdb::Key& base_root, const kdb::KeySet& ours, const kdb::Key& our_root, const kdb::KeySet& theirs, const kdb::Key& their_root,  kdb::Key& merge_root){
 	Key ourkey;
 	Key theirkey;
@@ -210,7 +232,13 @@ kdb::KeySet Merge::KeySetMerge(const kdb::KeySet& base, const kdb::Key& base_roo
 	return merged;
 }
 
-//This function merges two keysets (ours and theirs) using a base keyset as a refernece (a three-way merge). The merged keyset will be returned. If the merge function is unscuessfull and empty KeySet will be returned. This function is inteded as a basic version for the C++ API. It takes in three keysets and a parent key for where to store the merged keys. It works by finidng the parent key for each keyset and then calling the more complex function above.
+/**
+ *
+ * Returns a keyset that is the result of a merge on two keysets (ours and theirs) using a base keyset as a refernece (a three-way merge). 
+ * If the merge function is unscuessful an empty KeySet will be returned. 
+ * This function is inteded as a basic version for the C++ API. It takes in three keysets and a parent key for where to store the merged keys. 
+ * It works by finidng the parent key for each keyset and then calling the more complex function above.
+**/
 kdb::KeySet Merge::KeySetMerge(const kdb::KeySet& base, const kdb::KeySet& ours, const kdb::KeySet& theirs, kdb::Key& merge_root){
 	Key ourkey;
 	Key theirkey;
