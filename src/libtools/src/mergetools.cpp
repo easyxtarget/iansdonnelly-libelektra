@@ -26,7 +26,7 @@ Merge::Merge()
 {}
 
 /**
- * Returns the path of a key (fullname - basename).
+ * @return path of a key.
  */
 string Merge::getPath(const kdb::Key& key){
 	unsigned found;
@@ -37,7 +37,7 @@ string Merge::getPath(const kdb::Key& key){
 }
 
 /**
- * Determines if two keys are equal based on their GetString() values.
+ * @brief Determines if two keys are equal based on their GetString() values.
  * Returns true if they are equal. False if they are not.
  */
 bool Merge::KeyEqual(const kdb::Key& k1, const kdb::Key& k2){
@@ -48,7 +48,7 @@ bool Merge::KeyEqual(const kdb::Key& k1, const kdb::Key& k2){
 }
 
 /**
- * Determines if two KeySets are equal.
+ * @brief Determines if two KeySets are equal.
  * KeySets are considered equal if they are the same size and both keysets have the same keys determined by their name and KeyEqual.
  */
 bool Merge::KeySetEqual(const kdb::KeySet& ks1, const kdb::KeySet& ks2){

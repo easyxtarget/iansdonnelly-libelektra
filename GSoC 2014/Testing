@@ -1,0 +1,22 @@
+PLANS FOR TESTING MY WORK
+
+kdb merge:
+
+I plan to test the kdb merge fucntion by writing a series of tests in tests/shell/test_merge.sh
+Tests will consists of merges of various keysets that we create in order to test likely errors in the merge code.
+There will be a test in which ours and theirs are the same (the merge should just be take from ours).
+Additionally, there will be tests in which ours or theirs matches base (the merhe should consist of the differing keyset). 
+There will be a test where a key from ours differs from base, and a key of theirs differs from base (not the same key, the merge should reflect both changes).
+There will be a test for when a key is appended to theirs or ours (key should be appended to merged).
+There will be a test when a key is removed from theirs or ours (key should be removed from merged).
+There will be tests for conflics such as when theirs and ours have a key that differs from base (kdb merge should fail or go to interactive mode).
+There will be a test for when our keyset removes a key and theirs edits the same key (same expected behavior as above).
+
+Applying to Package Upgrades:
+There will be many tests using real configuration files that were mounted or imported into KeySets.
+I plan to work with other members of the Elektra team such a Felix to understand how config files can be turned into elektra KeySets.
+Additionally, I need to work with package maintainers to impliment kdb merge into package upgrades and make sure there is full compatibility. 
+
+
+
+

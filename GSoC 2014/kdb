@@ -1,0 +1,15 @@
+#Proof of concept bash completion for kdb. You must copy this file to /etc/bash_completion.d/kdb and load it with ". /etc/bash_completion.d/kdb"
+_kdb() 
+{
+    local cur prev opts
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    opts="check convert cp export file fstab get getmeta import info ls lsmeta merge mount mv rm set setmeta sget shell test umount vset"
+
+    if [[ ${cur} == * ]] ; then
+        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+        return 0
+    fi
+}
+complete -F _kdb kdb
