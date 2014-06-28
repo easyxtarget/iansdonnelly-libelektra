@@ -249,8 +249,8 @@ void test_min()
 	succeed_if (!tc.check(k), "should fail (number too low)");
 	k.setString("65536");
 	succeed_if (!tc.check(k), "should fail (number too high)");
-	//k.setString("65535"); fails >= 1000
-	//succeed_if (tc.check(k), "should check successfully");
+	k.setString("65535"); //fails >= 1000
+	succeed_if (tc.check(k), "should check successfully");
 	k.setString("x");
 	succeed_if (!tc.check(k), "should fail");
 	k.setString("");
@@ -268,8 +268,8 @@ void test_min()
 	succeed_if (!tc.check(k), "should fail (number too low)");
 	k.setString("65536");
 	succeed_if (!tc.check(k), "should fail (number too high)");
-	//k.setString("65535"); fails >= 1000
-	//succeed_if (tc.check(k), "should check successfully");
+	k.setString("65535"); //fails >= 1000
+	succeed_if (tc.check(k), "should check successfully");
 	k.setString("x");
 	succeed_if (!tc.check(k), "should fail");
 	k.setString("");
