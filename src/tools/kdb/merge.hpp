@@ -3,7 +3,7 @@
 
 #include <command.hpp>
 #include <kdb.hpp>
-#include <mergetools.hpp>
+#include <merging/threewaymerge.hpp>
 
 class MergeCommand : public Command
 {
