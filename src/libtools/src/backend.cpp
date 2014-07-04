@@ -28,7 +28,7 @@ namespace tools
 /** Creates a new backend with a given name and mountpoint.
  * Parameters are needed for serialisation only, so you can
  * keep them empty if you do not want to serialise. */
-Backend::Backend(string name_, string mp_) :
+Backend::Backend(string name_, string mp_):
 	name(name_), mp(mp_)
 {
 }
@@ -175,7 +175,7 @@ void Backend::serialise (kdb::Key &rootKey, kdb::KeySet &ret)
 		Key k("system" + mp, KEY_END);
 		Key restrictedPath ("system/elektra", KEY_END);
 		if (!k) throw MountpointInvalidException();
-		if (k.isBelow(restrictedPath)) throw MountpointInvalidException();
+		if (restrictedPath.isBelow(k)) throw MountpointInvalidException();
 		ret.append ( *Key(	rootKey.getName() + "/mountpoint",
 				KEY_VALUE, mp.c_str(),
 				KEY_COMMENT, "The mountpoint says the location where the backend should be mounted.\n"
@@ -186,7 +186,7 @@ void Backend::serialise (kdb::Key &rootKey, kdb::KeySet &ret)
 		Key k(mp, KEY_END);
 		Key restrictedPath ("system/elektra", KEY_END);
 		if (!k) throw MountpointInvalidException();
-		if (k.isBelow(restrictedPath)) throw MountpointInvalidException();
+		if (restrictedPath.isBelow(k)) throw MountpointInvalidException();
 		ret.append ( *Key(	rootKey.getName() + "/mountpoint",
 				KEY_VALUE, mp.c_str(),
 				KEY_COMMENT, "The mountpoint says the location where the backend should be mounted.\n"

@@ -57,7 +57,6 @@ int MergeCommand::execute (Cmdline const& cl)
 	KeySet base;
 	KeySet ours;
 	KeySet theirs;
-	KeySet merged;
 
 	kdb.get(original, root4);
 	base = original.cut(root1);
@@ -66,15 +65,15 @@ int MergeCommand::execute (Cmdline const& cl)
 	original.append(base);
 	original.append(ours);
 	original.append(theirs);
-	merged = Merge::KeySetMerge(base, root1, ours, root2, theirs, root3, root4);
+	MergeResult result = ThreeWayMerge::mergeKeySet(base, root1, ours, root2, theirs, root3, root4);
 	
 	KeySet empty;
-	if(merged == empty){
+	if( result.hasConflicts()){
 		cerr << "Merge unsuccessful." << endl;
 		ret = -1;
 	}
 
-	original.append(merged);
+	original.append(result.getMergedKeys());
 	kdb.set(original, root4);
 
 	return ret;
