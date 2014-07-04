@@ -13,7 +13,6 @@ int main(void){
 	KeySet b;
 	KeySet o;
 	KeySet t;
-	KeySet m;
 			
 	Key test1("user/merge/base/test1", KEY_END);
 	Key test2("user/merge/base/test2", KEY_END);	
@@ -38,6 +37,7 @@ int main(void){
 	test10.setString("Test 10");
 		
 		
+	b.append(Key("user/merge/base"));
 	b.append(test1);
 	b.append(test3);
 	b.append(test4);
@@ -57,6 +57,7 @@ int main(void){
 	Key test19("user/merge/ours/test9", KEY_END);
 	Key test20("user/merge/ours/test10", KEY_END);
 		
+	o.append(Key("user/merge/ours"));
 	o.append(test11);
 	o.append(test12);		
 	o.append(test14);
@@ -77,6 +78,7 @@ int main(void){
 	Key test30("user/merge/theirs/test10", KEY_END);
 		
 		
+	t.append(Key("user/merge/theirs"));
 	t.append(test21);
 	t.append(test25);
 	t.append(test27);
@@ -89,9 +91,9 @@ int main(void){
 	cout << endl << "Ours:" << endl << o << endl;	
 	cout << endl << "Theirs:" << endl << t << endl;
 		
-	m = Merge::KeySetMerge(b, o, t, merge_root);
+	MergeResult m = ThreeWayMerge::mergeKeySet(b, o, t, merge_root);
 		
-	cout << endl << "Merged:" << endl << m << endl;
+	cout << endl << "Merged:" << endl << m.getMergedKeys() << endl;
 
 	return 0;
 		

@@ -17,58 +17,126 @@
 #include <string>
 
 using namespace std;
+using namespace kdb;
 
 namespace kdb{
 
 namespace tools{
 
-Merge::Merge()
+ThreeWayMerge::ThreeWayMerge()
 {}
-
-/**
- * @return path of a key.
- */
-string Merge::getPath(const kdb::Key& key){
-	unsigned found;
-	string path;
-	found = key.getName().find_last_of("/");
-  	path = key.getName().substr(0,found+1);
-	return path;
-}
 
 /**
  * @brief Determines if two keys are equal based on their GetString() values.
  * Returns true if they are equal. False if they are not.
  */
-bool Merge::KeyEqual(const kdb::Key& k1, const kdb::Key& k2){
+// TODO: should compare metakeys
+bool ThreeWayMerge::keyDataEqual(const kdb::Key& k1, const kdb::Key& k2){
 	if(k1.getString() != k2.getString()){
 		return false;
 	}
 	return true;
 }
 
+string getKeyRelativeName(const Key& key, const Key& parent)
+{
+	return key.getFullName().substr(parent.getFullName().size());
+}
+
 /**
  * @brief Determines if two KeySets are equal.
  * KeySets are considered equal if they are the same size and both keysets have the same keys determined by their name and KeyEqual.
  */
-bool Merge::KeySetEqual(const kdb::KeySet& ks1, const kdb::KeySet& ks2){
-	if((ks1.size()) != (ks2.size()))
-		return false;
-	ks1.rewind();
-	ks2.rewind();
+bool ThreeWayMerge::keySetEqual(const kdb::KeySet& ks1, const Key& parentKey1, const kdb::KeySet& ks2, const Key& parentKey2)
+{
+
+	if (ks1.size () != ks2.size ()) return false;
+
+	cursor_t c1 = ks1.getCursor ();
+	cursor_t c2 = ks2.getCursor ();
+	ks1.rewind ();
+	ks2.rewind ();
+
 	Key k1;
 	Key k2;
-	while(k1=ks1.next()){
-		k2=ks2.next();
-		if(k1.getBaseName() != k2.getBaseName()){
+	bool equal = true;
+	while ((k1 = ks1.next ()))
+	{
+		k2 = ks2.next ();
+		if (getKeyRelativeName(k1, parentKey1) != getKeyRelativeName(k2, parentKey2))
+		{
 			//cerr << "Name mismatch!" << endl << "k1 name: " << k1.getBaseName() << " k2 name: " << k2.getBaseName() << endl;
-			return false;
+			equal = false;
+			break;
 		}
-		else if(!KeyEqual(k1, k2))
-			return false;
+		else if (!keyDataEqual (k1, k2))
+		{
+			equal = false;
+			break;
+		}
+
 	}
-	return true;
+
+	ks1.setCursor (c1);
+	ks2.setCursor (c2);
+
+	return equal;
 }
+
+Key ThreeWayMerge::rebaseKey(const Key& key, const Key& oldParent, const Key& newParent)
+{
+	Key result = key.dup();
+	string oldPath = key.getFullName();
+	string relativePath = oldPath.substr(oldParent.getFullName().length(), oldPath.length());
+	result.setName(newParent.getFullName() + relativePath);
+	return result;
+}
+
+KeySet ThreeWayMerge::rebaseKeySet(const KeySet& keySet, const Key& oldParent, const Key& newParent)
+{
+	KeySet result;
+	cursor_t cursor = keySet.getCursor();
+	keySet.rewind();
+
+	Key current;
+	while ((current = keySet.next()))
+	{
+		result.append(rebaseKey(current, oldParent, newParent));
+	}
+	keySet.setCursor(cursor);
+	return result;
+}
+
+KeySet ThreeWayMerge::getKeySetDifference(const KeySet& keySetA, const Key& parentA, const KeySet& keySetB, const Key& parentB)
+{
+	cursor_t cursorA = keySetA.getCursor();
+
+	KeySet result;
+	Key current;
+	keySetA.rewind();
+
+	/* get keys unique to A */
+	while ((current = keySetA.next()))
+	{
+		string currentRelativePath = current.getFullName().substr(parentA.getFullName().size());
+		string lookupPath = parentB.getFullName() + currentRelativePath;
+
+		Key lookupKey = keySetB.lookup(lookupPath.c_str());
+
+		if (!lookupKey)
+		{
+			result.append(current);
+		}
+		else if (!keyDataEqual(lookupKey, current))
+		{
+			result.append(current);
+		}
+	}
+
+	keySetA.setCursor(cursorA);
+	return result;
+}
+
 
 /**
  * Returns a keyset that is the result of a merge on two keysets (ours and theirs) using a base keyset as a refernece (a three-way merge). 
@@ -76,12 +144,21 @@ bool Merge::KeySetEqual(const kdb::KeySet& ks1, const kdb::KeySet& ks2){
  * This function is inteded as a full version for the kdb merge command or for  the C++ API. 
  * It works by taking in three keysets, their parent keys and a parent key for where to store the merged KeySet.
 **/
-kdb::KeySet Merge::KeySetMerge(const kdb::KeySet& base, const kdb::Key& base_root, const kdb::KeySet& ours, const kdb::Key& our_root, const kdb::KeySet& theirs, const kdb::Key& their_root,  kdb::Key& merge_root){
+MergeResult ThreeWayMerge::mergeKeySet(const KeySet& base, const Key& baseParent,
+		const KeySet& ours, const Key& ourParent, const KeySet& theirs,
+		const Key& theirParent, Key& mergeParent)
+{
 	Key ourkey;
 	Key theirkey;
 	Key basekey;
 	Key mergekey;
 	KeySet merged;
+	MergeResult result;
+
+	cursor_t baseCursor = base.getCursor();
+	cursor_t oursCursor = ours.getCursor();
+	cursor_t theirsCursor = theirs.getCursor();
+
 	base.rewind();
 	ours.rewind();
 	theirs.rewind();
@@ -96,45 +173,45 @@ kdb::KeySet Merge::KeySetMerge(const kdb::KeySet& base, const kdb::Key& base_roo
 	string merge_path;
 
 	//Get path of each keyset
-  	base_path = base_root.getName() + "/";
-  	our_path = our_root.getName() + "/";
-  	their_path = their_root.getName() + "/";
-	merge_path = merge_root.getName() + "/";
+  	base_path = baseParent.getName();
+  	our_path = ourParent.getName();
+  	their_path = theirParent.getName();
+	merge_path = mergeParent.getName();
 
 
-	//If our ks and their ks match
-	if(KeySetEqual(ours, theirs)){
-		//Set merged to ours
-		while(ourkey = ours.next()){
-			mergekey = ourkey.dup();
-			mergekey.setName(merge_path + ourkey.getName().substr(our_path.length()));
-			merged.append(mergekey);
-		}
-		return merged;
+	/*
+	KeySet oursMinusTheirs = getKeySetDifference(ours, ourParent, theirs, theirParent);
+	KeySet theirsMinusOurs = getKeySetDifference(theirs, theirParent, ours, ourParent);
+	KeySet differenceSet = KeySet(oursMinusTheirs);
+	differenceSet.append(theirsMinusOurs);
+
+	differenceSet.rewind();
+	Key current;
+
+	while ((current = differenceSet.next()))
+	{
+
 	}
-	//If base ks and their ks match
-	else if(KeySetEqual(base, theirs)){
-		//Set merged to ours
-		ours.rewind();
-		while(ourkey = ours.next()){
-			mergekey = ourkey.dup();
-			mergekey.setName(merge_path + ourkey.getName().substr(our_path.length()));
-			merged.append(mergekey);
-		}
-		return merged;
+	*/
+
+	/* nothing to merge -> take ours */
+	if(keySetEqual(ours, ourParent, theirs, theirParent)){
+		merged = rebaseKeySet(ours, ourParent, mergeParent);
+		return MergeResult(KeySet(), merged);
 	}
-	//If base ks and our ks match
-	else if(KeySetEqual(base, ours)){
-		//Set merged to theirs
-		while(theirkey = theirs.next()){
-			mergekey = theirkey.dup();
-			mergekey.setName(merge_path + theirkey.getName().substr(their_path.length()));
-			merged.append(mergekey);
-		}
-		return merged;
+
+	/* theirs was not changed, but ours -> take ours */
+	if(keySetEqual(base, baseParent, theirs, theirParent)){
+		merged = rebaseKeySet(ours, ourParent, mergeParent);
+		return MergeResult(KeySet(), merged);
 	}
-	//If none of the keysets match
-	else{
+
+	/* ours was not changed, but theirs -> take theirs */
+	if(keySetEqual(base, baseParent, ours, ourParent)){
+		merged = rebaseKeySet(theirs, theirParent, mergeParent);
+		return MergeResult(KeySet(), merged);
+	}
+
 		//Iterate though ours and theirs and check each key. If keys don't match, refernece base.
 
 		//Iterate over keysets.
@@ -148,54 +225,54 @@ kdb::KeySet Merge::KeySetMerge(const kdb::KeySet& base, const kdb::Key& base_roo
 			if(ours.lookup(our_lookup.c_str()) && theirs.lookup(their_lookup.c_str())){
 				ourkey = ours.lookup(our_lookup.c_str());
 				theirkey = theirs.lookup(their_lookup.c_str());
-				if(KeyEqual(ourkey, theirkey)){
+				if(keyDataEqual(ourkey, theirkey)){
 					mergekey = ourkey.dup();
 					mergekey.setName(merge_path + ourkey.getName().substr(our_path.length()));
-					merged.append(mergekey);
-				}			
-				else if(KeyEqual(basekey, theirkey)){
-					mergekey = ourkey.dup();
-					mergekey.setName(merge_path + ourkey.getName().substr(our_path.length()));
-					merged.append(mergekey);
+					result.addMergeKey(mergekey);
 				}
-				else if(KeyEqual(basekey, ourkey)){
+				else if(keyDataEqual(basekey, theirkey)){
+					mergekey = ourkey.dup();
+					mergekey.setName(merge_path + ourkey.getName().substr(our_path.length()));
+					result.addMergeKey(mergekey);
+				}
+				else if(keyDataEqual(basekey, ourkey)){
 					mergekey = theirkey.dup();
 					mergekey.setName(merge_path + theirkey.getName().substr(their_path.length()));
-					merged.append(mergekey);
+					result.addMergeKey(mergekey);
 				}
 				else{
 					//conflict!
 					cerr << "Key content conflict! basekey = " << basekey << " ourkey = " << ourkey << " theirkey = " << theirkey << endl;
-					return KeySet();
+					result.addConflict(ourkey, MODIFY, MODIFY);
 				}
 			}
 		}
-	
+
 		//Iterate over ours. If it has any unique keys, append them to merged.
 		ours.rewind();
 		while(ourkey=ours.next()){
-			base_lookup = base_path + ourkey.getBaseName();
-			our_lookup = our_path + ourkey.getBaseName();
-			their_lookup = their_path + ourkey.getBaseName();
+			base_lookup = base_path + ourkey.getName().substr(our_path.length());
+			our_lookup = our_path + ourkey.getName().substr(our_path.length());
+			their_lookup = their_path + ourkey.getName().substr(our_path.length());
 			//If ours has a key that theirs and base don't have.
 			if(!base.lookup(base_lookup.c_str())){
 				if(!theirs.lookup(their_lookup.c_str())){
 					mergekey = ourkey.dup();
 					mergekey.setName(merge_path + ourkey.getName().substr(our_path.length()));
-					merged.append(mergekey);
+					result.addMergeKey(mergekey);
 				}
 				//If base doesn't have it but theirs does.
 				else{
 					theirkey = theirs.lookup(their_lookup.c_str());
-					if(!KeyEqual(ourkey, theirkey)){
+					if(!keyDataEqual(ourkey, theirkey)){
 						//Conflict!
 						cerr << "Key content conflict, no base key, ourkey != theirkey. ourkey = " << ourkey << " theirkey = " << theirkey << endl;
-						return KeySet();
+						result.addConflict(ourkey, APPEND, APPEND);
 					}
 					else{
 						mergekey = ourkey.dup();
 						mergekey.setName(merge_path + ourkey.getName().substr(our_path.length()));
-						merged.append(mergekey);
+						result.addMergeKey(mergekey);
 					}
 				}
 			}
@@ -205,31 +282,47 @@ kdb::KeySet Merge::KeySetMerge(const kdb::KeySet& base, const kdb::Key& base_roo
 		//Iterate over theirs. If it has any unique keys, append them to merged.
 		theirs.rewind();
 		while(theirkey=theirs.next()){
-			base_lookup = base_path + theirkey.getBaseName();
-			our_lookup = our_path + theirkey.getBaseName();
-			their_lookup = their_path + theirkey.getBaseName();
+			base_lookup = base_path + theirkey.getName().substr(their_path.length());
+			our_lookup = our_path + theirkey.getName().substr(their_path.length());
+			their_lookup = their_path + theirkey.getName().substr(their_path.length());
 			//If theirs has a key that ours and base don't have.
 			if(!base.lookup(base_lookup.c_str())){
 				if(!ours.lookup(our_lookup.c_str())){
 					mergekey = theirkey.dup();
 					mergekey.setName(merge_path + theirkey.getName().substr(their_path.length()));
-					merged.append(mergekey);
+					result.addMergeKey(mergekey);
 				}
 				//If base doesn't have it but ours does.
 				else{
 					ourkey = ours.lookup(our_lookup.c_str());
-					if(!KeyEqual(theirkey, ourkey)){
+					if(!keyDataEqual(theirkey, ourkey)){
 						//Conflict!
 						cerr << "Key content conflict, no base key, ourkey != theirkey. ourkey = " << ourkey << " theirkey = " << theirkey << endl;
-						return KeySet();
+						result.addConflict(ourkey, APPEND, APPEND);
 					}
 				}
 			}
 		}
-	}
+
+
+
+	base.setCursor(baseCursor);
+	ours.setCursor(oursCursor);
+	theirs.setCursor(theirsCursor);
 
 	//Return merged
-	return merged;
+	return result;
+}
+
+/**
+ * @return path of a key.
+ */
+string getPath(const kdb::Key& key){
+	unsigned found;
+	string path;
+	found = key.getName().find_last_of("/");
+  	path = key.getName().substr(0,found+1);
+	return path;
 }
 
 /**
@@ -239,42 +332,59 @@ kdb::KeySet Merge::KeySetMerge(const kdb::KeySet& base, const kdb::Key& base_roo
  * This function is inteded as a basic version for the C++ API. It takes in three keysets and a parent key for where to store the merged keys. 
  * It works by finidng the parent key for each keyset and then calling the more complex function above.
 **/
-kdb::KeySet Merge::KeySetMerge(const kdb::KeySet& base, const kdb::KeySet& ours, const kdb::KeySet& theirs, kdb::Key& merge_root){
-	Key ourkey;
-	Key theirkey;
-	Key basekey;
-	KeySet merged;
-	base.rewind();
-	ours.rewind();
-	theirs.rewind();
-	
-	string base_lookup;
-	string our_lookup;
-	string their_lookup;
-	string base_path;
-	string our_path;
-	string their_path;
-	string merge_path;
+MergeResult ThreeWayMerge::mergeKeySet(const KeySet& base, const KeySet& ours, const KeySet& theirs, Key& mergeRoot){
+	Key ourkey = ours.head().dup();
+	Key theirkey = theirs.head().dup();
+	Key basekey = base.head().dup();
 
-	//Get path of each keyset
-  	base_path = getPath(base.head());
-  	our_path = getPath(ours.head());
-  	their_path = getPath(theirs.head());
+	MergeResult merged = mergeKeySet(base, basekey, ours, ourkey, theirs, theirkey, mergeRoot);
 
-	basekey = base.tail().dup();
-	ourkey = ours.tail().dup();
-	theirkey = theirs.tail().dup();
-
-	basekey.setName(getPath(basekey));
-	ourkey.setName(getPath(ourkey));
-	theirkey.setName(getPath(theirkey));
-
-	merged = KeySetMerge(base, basekey, ours, ourkey, theirs, theirkey, merge_root);
-	
 	return merged;
 }
 
-Merge::~Merge()
+
+
+
+ThreeWayMerge::~ThreeWayMerge()
+{}
+
+MergeResult::MergeResult()
+{}
+
+MergeResult::MergeResult(const KeySet& _conflictSet, const KeySet& _mergedKeys)
+{
+	conflictSet = _conflictSet;
+	mergedKeys = _mergedKeys;
+}
+
+void MergeResult::addConflict(Key& key, ConflictOperation ourOperation, ConflictOperation theirOperation)
+{
+	addConflictMeta(key, "our", ourOperation);
+	addConflictMeta(key, "their", theirOperation);
+	conflictSet.append(key);
+}
+
+void MergeResult::addConflictMeta(Key& key, std::string const & who, ConflictOperation operation)
+{
+	std::string metaName = "conflict/" + who;
+	switch (operation)
+	{
+	case APPEND:
+		key.setMeta(metaName, "append");
+		break;
+	case DELETE:
+		key.setMeta(metaName, "delete");
+		break;
+	case MODIFY:
+		key.setMeta(metaName, "modify");
+		break;
+	default:
+		key.setMeta(metaName, "unknown");
+	}
+}
+
+
+MergeResult::~MergeResult()
 {}
 
 }
