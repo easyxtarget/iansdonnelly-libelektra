@@ -88,6 +88,7 @@ int elektraLineGet(Plugin *handle ELEKTRA_UNUSED, KeySet *returned, Key *parentK
 	int n;
 	char *key;
 	char *value;
+	size_t len = 0;
 	int i = 0;
 	char *i_string;
 	FILE *fp = fopen (keyString(parentKey), "r");
@@ -99,7 +100,7 @@ int elektraLineGet(Plugin *handle ELEKTRA_UNUSED, KeySet *returned, Key *parentK
 		return 0; // we just ignore if we could not open file
 	}
 	printf("Opened file successfully\n");
-	while ((n = fscanf (fp, "%ms\n", &value)) >= 1)
+	while ((n = getline(&value, &len, fp)) != -1)
 	{
 		i++;
 		key = "line";
