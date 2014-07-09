@@ -11,4 +11,4 @@ target_link_libraries (${PLUGIN_NAME} elektra)
 install (TARGETS ${PLUGIN_NAME}
 	DESTINATION lib${LIB_SUFFIX}/${TARGET_PLUGIN_FOLDER})
 
-#add_plugintest (simpleini)
+#add_plugintest (line)
