@@ -65,20 +65,20 @@ int elektraLineGet(Plugin *handle ELEKTRA_UNUSED, KeySet *returned, Key *parentK
 
 	int n;
 	char *value;
-	char* key;
+	char *key = NULL;
 	int i = 0;
+	size_t len = 0;
 	size_t numberSize;
+	//int bufSize = 10;
 	size_t stringSize;
 	FILE *fp = fopen (keyString(parentKey), "r");
 	if (!fp)
 	{
-		printf("Could not open file\n");
 		// ELEKTRA_SET_ERROR(74, parentKey, keyString(parentKey));
 		// return -1;
 		return 0; // we just ignore if we could not open file
 	}
-	printf("Opened file successfully\n");
-	while ((n = fscanf (fp, "%ms\n", &value)) >= 1)
+	while ((n = getline (&value, &len, fp)) != -1)
 	{
 		i++;
 		numberSize = snprintf(0, 0, "%d", i);
@@ -93,6 +93,7 @@ int elektraLineGet(Plugin *handle ELEKTRA_UNUSED, KeySet *returned, Key *parentK
 			ELEKTRA_SET_ERROR(59, parentKey, key);
 			return -1;
 		}
+		
 		keySetString(read, value);
 
 		ksAppendKey (returned, read);
