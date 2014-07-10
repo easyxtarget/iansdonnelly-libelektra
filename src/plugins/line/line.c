@@ -62,14 +62,14 @@ int elektraLineGet(Plugin *handle ELEKTRA_UNUSED, KeySet *returned, Key *parentK
 		ksDel (moduleConfig);
 		return 1;
 	}
-
+	printf("parentKey Name == %s\n", keyName(parentKey));
 	int n;
 	char *value;
-	char *key = NULL;
+	char *key;
+	Key *read;
 	int i = 0;
 	size_t len = 0;
 	size_t numberSize;
-	//int bufSize = 10;
 	size_t stringSize;
 	FILE *fp = fopen (keyString(parentKey), "r");
 	if (!fp)
@@ -78,6 +78,7 @@ int elektraLineGet(Plugin *handle ELEKTRA_UNUSED, KeySet *returned, Key *parentK
 		// return -1;
 		return 0; // we just ignore if we could not open file
 	}
+	//Read in each line
 	while ((n = getline (&value, &len, fp)) != -1)
 	{
 		i++;
@@ -85,15 +86,17 @@ int elektraLineGet(Plugin *handle ELEKTRA_UNUSED, KeySet *returned, Key *parentK
 		stringSize = sizeof("line") + numberSize + 1;
 		key = malloc(stringSize);
 		snprintf (key, stringSize, "line%d", i);
-		Key *read = keyNew(0);
-		if (keySetName(read, key) == -1)
+		printf("key = '%s'\n", key);
+		printf("value = '%s'\n", value);
+		read = keyDup(parentKey);
+		if (keyAddBaseName(read, key) == -1)
 		{
 			fclose (fp);
 			keyDel (read);
 			ELEKTRA_SET_ERROR(59, parentKey, key);
 			return -1;
 		}
-		
+		printf("read name = %s\n", keyName(read));
 		keySetString(read, value);
 
 		ksAppendKey (returned, read);
