@@ -331,7 +331,7 @@ static int ksFromXMLReader(KeySet *ks,xmlTextReaderPtr reader)
 	xmlChar *nodeName=0;
 
 	ret = xmlTextReaderRead(reader); /* go to first node */
-	while (ret == 1) {
+	while ((ret == 1)) {
 		/* walk node per node until the end of the stream */
 		nodeName=xmlTextReaderName(reader);
 		

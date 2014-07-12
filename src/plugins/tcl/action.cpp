@@ -23,12 +23,12 @@ void serialise(ostream &ofs, KeySet & output)
 
 	ofs << '{' << endl;
 	output.rewind();
-	while (Key k = output.next())
+	while ((Key k = output.next()))
 	{
 		ofs << "\t{" << endl;
 		ofs << "\t\t" <<  k.getName() << " = " << k.getString() << endl;
 		k.rewindMeta();
-		while (const Key m = k.nextMeta())
+		while ((const Key m = k.nextMeta()))
 		{
 			ofs << "\t\t{" << endl;
 			ofs << "\t\t\t" << m.getName() << " = " << m.getString() << endl;
