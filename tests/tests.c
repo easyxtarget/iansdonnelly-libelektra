@@ -106,7 +106,7 @@ int compare_line_files (const char *filename, const char *genfilename)
 
 	exit_if_fail (forg && fgen, bufferorg);
 
-	while (	(org = fgets (bufferorg, BUFFER_LENGTH, forg)) &&
+	while ((	(org = fgets (bufferorg, BUFFER_LENGTH, forg))) &&
 		(gen = fgets (buffergen, BUFFER_LENGTH, fgen)))
 	{
 		line ++;

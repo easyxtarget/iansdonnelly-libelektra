@@ -104,12 +104,12 @@ size_t elektraHostsFindToken (char **token, char *line)
 	size_t i = 0;
 
 	/* Step 1, skip whitespaces */
-	while (line[i] == ' ' || line[i] == '\t') i++;
+	while ((line[i] == ' ' || line[i] == '\t')) i++;
 	if (line[i] == '\0' || line[i] == '\n') return 0; /* We found the end of the line */
 
 	/* Step 2, parse the token */
 	*token = &line[i];
-	while (line[i] != ' ' && line[i] != '\t' && line[i] != '\0' && line[i] != '\n') i++;
+	while ((line[i] != ' ' && line[i] != '\t' && line[i] != '\0' && line[i] != '\n')) i++;
 	if (line[i] == '\0' || line[i] == '\n')
 	{
 		line[i] = '\0'; /* Terminate the token. */
@@ -349,7 +349,7 @@ int elektraHostsSet(Plugin *handle ELEKTRA_UNUSED, KeySet *returned, Key *parent
 			char *token, *saveptr, *mcomment = malloc (keyGetCommentSize(key));
 			strcpy (mcomment, keyComment(key));
 			token = strtok_r (mcomment, "\n", &saveptr);
-			while (token != 0)
+			while ((token != 0))
 			{
 				fprintf (fp, "#%s\n", token);
 				token = strtok_r (NULL, "\n", &saveptr);
