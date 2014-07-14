@@ -81,15 +81,13 @@ int elektraLineGet(Plugin *handle ELEKTRA_UNUSED, KeySet *returned, Key *parentK
 	digits = i;
 	rewind(fp);
 	i = 0;
-	//printf("about to getline\n");
 	//Read in each line
 	while ((n = getline(&value, &len, fp)) != -1)
 	{
-		//printf("got line, line = '%s'\n", value);
+		//Remove trailing newline
 		if (value[strlen(value) - 1] == '\n') {
   			value[strlen(value) - 1] = '\0';
 		}
-		//printf("value = '%s'\n", value);
 		i++;
 		//Set key to correct size
 		numberSize = snprintf(0, 0, "%0*d", digits, i);
@@ -111,12 +109,7 @@ int elektraLineGet(Plugin *handle ELEKTRA_UNUSED, KeySet *returned, Key *parentK
 		free (key);
 		len=0;
 		free(value);
-		//printf("freed key\n");
-		
-		//printf("freed value\n");
 	}
-
-	//free (value);
 
 	if (feof(fp) == 0)
 	{
