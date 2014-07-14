@@ -1,14 +1,23 @@
 include (LibAddMacros)
 
-set (SOURCES line.h line.c)
-add_sources (elektra-full ${SOURCES})
-add_headers (SOURCES)
+try_compile (COMPAT_GETLINE
+		"${CMAKE_BINARY_DIR}"
+		"${PROJECT_SOURCE_DIR}/src/plugins/line/testgetline.c"
+		)
 
-set (PLUGIN_NAME elektra-line)
-add_library (${PLUGIN_NAME} MODULE ${SOURCES})
-target_link_libraries (${PLUGIN_NAME} elektra)
+	if (COMPAT_GETLINE)
+		set (SOURCES line.h line.c)
+		add_sources (elektra-full ${SOURCES})
+		add_headers (SOURCES)
 
-install (TARGETS ${PLUGIN_NAME}
-	DESTINATION lib${LIB_SUFFIX}/${TARGET_PLUGIN_FOLDER})
+		set (PLUGIN_NAME elektra-line)
+		add_library (${PLUGIN_NAME} MODULE ${SOURCES})
+		target_link_libraries (${PLUGIN_NAME} elektra)
+
+		install (TARGETS ${PLUGIN_NAME}
+			DESTINATION lib${LIB_SUFFIX}/${TARGET_PLUGIN_FOLDER})
+	else (COMPAT_GETLINE)
+		remove_plugin (line "Unable to use getline fucntion. Check libc version, should be higher than 4.6.27.")
+	endif (COMPAT_GETLINE)
 
 #add_plugintest (line)

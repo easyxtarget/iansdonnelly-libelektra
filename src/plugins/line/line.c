@@ -19,15 +19,6 @@
 #include <stddef.h>
 #include <string.h>
 
-// 4.7.2 supports %ms but yields warning using -Wformat together with
-// -ansi -pedantic
-// warning: ISO C does not support the 'm' scanf flag
-#define GCC_VERSION (__GNUC__ * 10000 \
-                              + __GNUC_MINOR__ * 100 \
-                              + __GNUC_PATCHLEVEL__)
-#if  GCC_VERSION < 40800
-# pragma GCC diagnostic ignored "-Wformat"
-#endif
 
 int elektraLineGet(Plugin *handle ELEKTRA_UNUSED, KeySet *returned, Key *parentKey)
 {
@@ -62,14 +53,15 @@ int elektraLineGet(Plugin *handle ELEKTRA_UNUSED, KeySet *returned, Key *parentK
 		ksDel (moduleConfig);
 		return 1;
 	}
-	int n;
-	char *value;
+	char *value = NULL;
 	char *key;
 	Key *read;
 	int i;
 	int digits = 0;
 	size_t numberSize;
 	size_t stringSize;
+	size_t len = 0;
+	ssize_t n;
 	FILE *fp = fopen (keyString(parentKey), "r");
 	if (!fp)
 	{
@@ -87,20 +79,24 @@ int elektraLineGet(Plugin *handle ELEKTRA_UNUSED, KeySet *returned, Key *parentK
 	for(i = 0; digits > 0; i++) 
 		digits /= 10;
 	digits = i;
-	//printf("digits = %d", digits);
 	rewind(fp);
 	i = 0;
+	//printf("about to getline\n");
 	//Read in each line
-	while ((n = fscanf (fp, "%ms\n", &value)) >= 1)
+	while ((n = getline(&value, &len, fp)) != -1)
 	{
+		//printf("got line, line = '%s'\n", value);
+		if (value[strlen(value) - 1] == '\n') {
+  			value[strlen(value) - 1] = '\0';
+		}
+		//printf("value = '%s'\n", value);
 		i++;
+		//Set key to correct size
 		numberSize = snprintf(0, 0, "%0*d", digits, i);
 		stringSize = sizeof("line") + numberSize + 1;
-		//printf("stringSize = %d\n", stringSize);
 		key = malloc(stringSize);
+		//Append i to line
 		snprintf (key, stringSize, "line%0*d", digits, i);
-		//printf("key = '%s'\n", key);
-		//printf("value = '%s'\n", value);
 		read = keyDup(parentKey);
 		if (keyAddBaseName(read, key) == -1)
 		{
@@ -109,14 +105,18 @@ int elektraLineGet(Plugin *handle ELEKTRA_UNUSED, KeySet *returned, Key *parentK
 			ELEKTRA_SET_ERROR(59, parentKey, key);
 			return -1;
 		}
-		//printf("read name = %s\n", keyName(read));
 		keySetString(read, value);
-		//printf("sizeof key = %d sizeof value = %d\n", sizeof(key), sizeof(value));
 
 		ksAppendKey (returned, read);
 		free (key);
-		free (value);
+		len=0;
+		free(value);
+		//printf("freed key\n");
+		
+		//printf("freed value\n");
 	}
+
+	//free (value);
 
 	if (feof(fp) == 0)
 	{
