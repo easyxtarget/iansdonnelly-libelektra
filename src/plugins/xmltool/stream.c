@@ -182,7 +182,7 @@ ssize_t keyToStreamBasename(const Key *key, FILE *stream, const char *parent,
 
 		found=memcmp(parent,key->key,skip);
 		if (found == 0) {
-			while (*(key->key+skip) == KDB_PATH_SEPARATOR) ++skip;
+			while ((*(key->key+skip) == KDB_PATH_SEPARATOR)) ++skip;
 
 			if (*(key->key+skip) != 0) /* we don't want a null basename */
 				written+=fprintf(stream,"<key basename=\"%s\"",
@@ -589,7 +589,7 @@ int ksOutput(const KeySet *ks, FILE *stream, option_t options)
 	if (KDB_O_HEADER & options) {
 		fprintf(stream,"Output keyset of size %d\n", (int)ksGetSize(cks)); 
 	}
-	while ( (key = ksNext(cks)) != NULL)
+	while (( (key = ksNext(cks)) != NULL))
 	{
 		if (options & KDB_O_SHOWINDICES) fprintf(stream, "[%d] ", (int)size);
 		keyOutput (key,stream,options);

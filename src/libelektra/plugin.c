@@ -130,7 +130,7 @@ int elektraProcessPlugin(Key *cur, int *pluginNumber, char **pluginName, char **
 			size_t pluginNameSize = 1; /* For null character */
 			size_t referenceNameSize = 0;
 			/* We will introduce a new plugin */
-			while (*iter != '#')
+			while ((*iter != '#'))
 			{
 				++iter;
 				++pluginNameSize;
@@ -294,7 +294,7 @@ Plugin* elektraPluginOpen(const char *name, KeySet *modules, KeySet *config, Key
 	}
 
 	n = name;
-	while (*n != '\0')
+	while ((*n != '\0'))
 	{
 		if (*n == '/') ++n;
 		else break;

@@ -47,7 +47,7 @@ unsigned long name_depth(Key k)
 	unsigned long pos = name.find("/", 0);
 	unsigned long depth = 0;
 
-	while (pos != std::string::npos)
+	while ((pos != std::string::npos))
 	{
 		pos = name.find("/", pos+1);
 		++ depth;
