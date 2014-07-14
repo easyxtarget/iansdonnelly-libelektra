@@ -1,7 +1,7 @@
 /**
  * \file
  *
- * \brief Implements a way to build and deal with a backend
+ * \brief Models a merge task
  *
  * \copyright BSD License (see doc/COPYING or http://www.libelektra.org)
  *
@@ -38,8 +38,8 @@ protected:
 class BaseMergeKeys: public MergeKeys
 {
 public:
-	BaseMergeKeys(const KeySet& keys, const Key& parentKey) :
-			MergeKeys (keys, parentKey)
+	BaseMergeKeys(const KeySet& _keys, const Key& _parentKey) :
+			MergeKeys (_keys, _parentKey)
 	{
 	}
 };
@@ -47,8 +47,8 @@ public:
 class TheirMergeKeys: public MergeKeys
 {
 public:
-	TheirMergeKeys(const KeySet& keys, const Key& parentKey) :
-			MergeKeys (keys, parentKey)
+	TheirMergeKeys(const KeySet& _keys, const Key& _parentKey) :
+			MergeKeys (_keys, _parentKey)
 	{
 	}
 
@@ -57,8 +57,8 @@ public:
 class OurMergeKeys: public MergeKeys
 {
 public:
-	OurMergeKeys(const KeySet& keys, const Key& parentKey) :
-			MergeKeys (keys, parentKey)
+	OurMergeKeys(const KeySet& _keys, const Key& _parentKey) :
+			MergeKeys (_keys, _parentKey)
 	{
 	}
 };
@@ -66,13 +66,13 @@ public:
 class MergeTask
 {
 public:
-	const KeySet base;
-	const KeySet ours;
-	const KeySet theirs;
-	const Key baseParent;
-	const Key ourParent;
-	const Key theirParent;
-	const Key mergeRoot;
+	KeySet base;
+	KeySet ours;
+	KeySet theirs;
+	Key baseParent;
+	Key ourParent;
+	Key theirParent;
+	Key mergeRoot;
 
 	MergeTask(const BaseMergeKeys& _base, const OurMergeKeys& _ours,
 			const TheirMergeKeys& _theirs, const Key& _mergeRoot) :
