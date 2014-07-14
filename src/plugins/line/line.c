@@ -62,13 +62,12 @@ int elektraLineGet(Plugin *handle ELEKTRA_UNUSED, KeySet *returned, Key *parentK
 		ksDel (moduleConfig);
 		return 1;
 	}
-	printf("parentKey Name == %s\n", keyName(parentKey));
 	int n;
 	char *value;
 	char *key;
 	Key *read;
-	int i = 0;
-	size_t len = 0;
+	int i;
+	int digits = 0;
 	size_t numberSize;
 	size_t stringSize;
 	FILE *fp = fopen (keyString(parentKey), "r");
@@ -78,16 +77,30 @@ int elektraLineGet(Plugin *handle ELEKTRA_UNUSED, KeySet *returned, Key *parentK
 		// return -1;
 		return 0; // we just ignore if we could not open file
 	}
+	//Find # of lines
+	char ch;
+	while(!feof(fp)){
+  		ch = fgetc(fp);
+  		if(ch == '\n')
+    			digits++;
+	}
+	for(i = 0; digits > 0; i++) 
+		digits /= 10;
+	digits = i;
+	//printf("digits = %d", digits);
+	rewind(fp);
+	i = 0;
 	//Read in each line
-	while ((n = getline (&value, &len, fp)) != -1)
+	while ((n = fscanf (fp, "%ms\n", &value)) >= 1)
 	{
 		i++;
-		numberSize = snprintf(0, 0, "%d", i);
+		numberSize = snprintf(0, 0, "%0*d", digits, i);
 		stringSize = sizeof("line") + numberSize + 1;
+		//printf("stringSize = %d\n", stringSize);
 		key = malloc(stringSize);
-		snprintf (key, stringSize, "line%d", i);
-		printf("key = '%s'\n", key);
-		printf("value = '%s'\n", value);
+		snprintf (key, stringSize, "line%0*d", digits, i);
+		//printf("key = '%s'\n", key);
+		//printf("value = '%s'\n", value);
 		read = keyDup(parentKey);
 		if (keyAddBaseName(read, key) == -1)
 		{
@@ -96,8 +109,9 @@ int elektraLineGet(Plugin *handle ELEKTRA_UNUSED, KeySet *returned, Key *parentK
 			ELEKTRA_SET_ERROR(59, parentKey, key);
 			return -1;
 		}
-		printf("read name = %s\n", keyName(read));
+		//printf("read name = %s\n", keyName(read));
 		keySetString(read, value);
+		//printf("sizeof key = %d sizeof value = %d\n", sizeof(key), sizeof(value));
 
 		ksAppendKey (returned, read);
 		free (key);
