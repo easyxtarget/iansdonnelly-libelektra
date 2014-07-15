@@ -21,7 +21,7 @@ static kdblib_symbol* elektraStaticLoad(const char *module)
 {
 	kdblib_symbol	*current;
 	current = kdb_exported_syms;
-	while (( current->name != NULL )) {
+	while ( current->name != NULL ) {
 		/* Skip symbols, we're searching for
 		 * the module name */
 		if ( current->function == NULL && strcmp(current->name, module) == 0 ) {
@@ -42,7 +42,7 @@ static kdblib_symbol* elektraStaticSym(kdblib_symbol* handle, const char *symbol
 
 	current = handle;
 	/* For each symbol about this module */
-	while (( current->function != NULL )) {
+	while ( current->function != NULL ) {
 		if ( strcmp(current->name, symbol) == 0 )
 			return current;
 

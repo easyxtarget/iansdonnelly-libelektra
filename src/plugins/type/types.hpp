@@ -169,7 +169,7 @@ public:
 		std::string label = k.getString();
 		size_t oldpos = 0;
 		size_t pos = label.find(',');;
-		while ((pos != string::npos))
+		while (pos != string::npos)
 		{
 			std::string type = label.substr (oldpos, pos - oldpos);
 			if (choices.find(type) == choices.end()) return false;

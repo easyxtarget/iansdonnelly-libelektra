@@ -1100,7 +1100,7 @@ inline const Key Key::nextMeta()
  *
  * @code
  * k.rewindMeta();
- * while ((meta = k.nextMeta()))
+ * while (meta = k.nextMeta())
  * {
  * 	cout << meta.getName() << " " << meta.getString() << endl;
  * }

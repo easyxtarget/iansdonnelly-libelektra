@@ -129,7 +129,7 @@ Ni_PRIVATE int GetNextIdentifier(file_buf * restrict fb,
 #  define invalid() (len = 0, graph_len = 0)
 
    int state = ST_START; //holds current state for FSM, duh
-   while((state != ST_DONE)) //do this until we're done
+   while(state != ST_DONE) //do this until we're done
    {
       //Get char into c; if it's eof, dip out.
       if((c = BufGetC(fb)) == EOF)
@@ -336,7 +336,7 @@ Ni_PRIVATE int GetValue(file_buf * restrict fb, Ds_str * restrict value_out)
 
    value_out->len = 0; //set length to 0
 
-   while((state != ST_DONE)) //until we decide to stop
+   while(state != ST_DONE) //until we decide to stop
    {
       //Get next char; dip out (successfully) if EOF.
       if((c = BufGetC(fb)) == EOF)

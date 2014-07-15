@@ -486,7 +486,7 @@ inline bool KeySet::operator==(KeySet const& other)
 	other.rewind();
 	Key k1;
 	Key k2;
-	while((k1=this->next())){
+	while(k1=this->next()){
 		k2=other.next();
 		if(k1.getName() != k2.getName()){
 			return false;
@@ -505,7 +505,7 @@ inline bool KeySet::operator!=(KeySet const& other)
 	other.rewind();
 	Key k1;
 	Key k2;
-	while((k1=this->next())){
+	while(k1=this->next()){
 		k2=other.next();
 		if(k1.getName() == k2.getName()){
 			return false;
