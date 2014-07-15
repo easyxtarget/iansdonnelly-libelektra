@@ -29,7 +29,7 @@ int elektraKeyNameReverseNext(keyNameReverseIterator *it)
 	int endReached=0;
 
 	// skip all repeating '/' in the "beginning" of string
-	while ((*real == KDB_PATH_SEPARATOR))
+	while (*real == KDB_PATH_SEPARATOR)
 	{
 		--real;
 	}
@@ -43,7 +43,7 @@ int elektraKeyNameReverseNext(keyNameReverseIterator *it)
 
 	// now see where this basename begins
 	// also handles escaped chars with '\'
-	while ((real != it->rend && !endReached))
+	while (real != it->rend && !endReached)
 	{
 		--real;
 		if (real != it->rend && *real==KDB_PATH_SEPARATOR)

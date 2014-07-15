@@ -39,7 +39,7 @@ int elektraArrayIncName(Key *key)
 	}
 
 	++baseName; // jump over #
-	while((*baseName == '_') // jump over all _
+	while(*baseName == '_') // jump over all _
 	{
 		++baseName;
 	}
@@ -47,7 +47,7 @@ int elektraArrayIncName(Key *key)
 	// TODO: implement error handling for non-numbers
 	// needs also ajustment in jumping over all _ to
 	// be robust against any text
-	int oldIndex = atoi(baseName));
+	int oldIndex = atoi(baseName);
 	int newIndex = oldIndex+1; // we increment by one
 
 	// maximal size calculation (C99 would also allow non maximum though...)

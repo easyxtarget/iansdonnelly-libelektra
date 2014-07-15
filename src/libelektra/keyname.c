@@ -376,7 +376,7 @@ ssize_t keySetName(Key *key, const char *newName)
 	
 	/* iterate over each single folder name removing repeated '/' and escaping when needed */
 	key->keySize=rootLength;
-	while ((*(p=keyNameGetOneLevel(p+size,&size)))) {
+	while (*(p=keyNameGetOneLevel(p+size,&size))) {
 		/* printf ("level: %s, size: %d\n", p, size); */
 		if (size == 1 && strncmp (p, ".",1) == 0)
 		{
@@ -386,7 +386,7 @@ ssize_t keySetName(Key *key, const char *newName)
 		else if (size == 2 && strncmp (p, "..",2) == 0) /* give away directory */
 		{
 			key->key[key->keySize] = 0; /* initialize first (valgrind) */
-			while ((key->keySize > rootLength && key->key[key->keySize] != KDB_PATH_SEPARATOR)) key->keySize--;
+			while (key->keySize > rootLength && key->key[key->keySize] != KDB_PATH_SEPARATOR) key->keySize--;
 			/* printf ("do .. (key->keySize: %d), key->key: %s, rootLength: %d, key->keySize: %d\n",
 					key->keySize, key->key, rootLength, key->keySize); */
 			continue;
@@ -401,7 +401,7 @@ ssize_t keySetName(Key *key, const char *newName)
 	}
 
 	/* remove unescaped trailing slashes */
-	while ((key->key[key->keySize-1] == KDB_PATH_SEPARATOR && key->key[key->keySize-2] != '\\')) key->keySize--;
+	while (key->key[key->keySize-1] == KDB_PATH_SEPARATOR && key->key[key->keySize-2] != '\\') key->keySize--;
 	key->key[key->keySize]=0; /* finalize string */
 
 	key->flags |= KEY_FLAG_SYNC;
@@ -556,7 +556,7 @@ const char *keyBaseName(const Key *key)
 
 	if (!p) return "";
 
-	while ((*(p=keyNameGetOneLevel(p+size,&size)))) base=p;
+	while (*(p=keyNameGetOneLevel(p+size,&size))) base=p;
 
 	if (base != key->key) return base;
 	else return "";
@@ -594,7 +594,7 @@ ssize_t keyGetBaseNameSize(const Key *key)
 
 	if (!p) return 1;
 
-	while ((*(p=keyNameGetOneLevel(p+size,&size)))) {
+	while (*(p=keyNameGetOneLevel(p+size,&size))) {
 		base=p;
 		baseSize=size;
 	}
@@ -645,7 +645,7 @@ ssize_t keyGetBaseName(const Key *key, char *returned, size_t maxSize)
 		return 1;
 	}
 
-	while ((*(p=keyNameGetOneLevel(p+size,&size))))
+	while (*(p=keyNameGetOneLevel(p+size,&size)))
 	{
 		baseName=p;
 		baseSize=size+1;
@@ -708,7 +708,7 @@ ssize_t keyAddBaseName(Key *key, const char *baseName)
 
 	if (key->key) {
 		p = baseName;
-		while ((*(p=keyNameGetOneLevel(p+size,&size))))
+		while (*(p=keyNameGetOneLevel(p+size,&size)))
 		{
 			key->keySize += size+1;
 			key->key=realloc(key->key,key->keySize);
@@ -765,7 +765,7 @@ ssize_t keySetBaseName(Key *key, const char *baseName)
 		key->key[key->keySize-1]=0; /* finalize string */
 		/*Now add new baseName*/
 		p = baseName;
-		while ((*(p=keyNameGetOneLevel(p+size,&size))))
+		while (*(p=keyNameGetOneLevel(p+size,&size)))
 		{
 			key->keySize += size+1;
 			key->key=realloc(key->key,key->keySize);

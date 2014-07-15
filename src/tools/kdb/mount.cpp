@@ -152,7 +152,7 @@ void MountCommand::getMountpoint(Cmdline const& cl)
 	std::vector <std::string> mountpoints;
 	mountpoints.push_back("system/elektra");
 	mountConf.rewind();
-	while ((cur = mountConf.next()))
+	while (cur = mountConf.next())
 	{
 		if (cur.getBaseName() == "mountpoint")
 		{
@@ -273,7 +273,7 @@ void MountCommand::appendPlugins(Cmdline const& cl, Backend & backend)
 		current_plugin ++;
 	}
 
-	while ((pname != "." || !backend.validated()))
+	while (pname != "." || !backend.validated())
 	{
 		try {
 			backend.addPlugin (pname);
