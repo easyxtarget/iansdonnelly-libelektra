@@ -10,11 +10,11 @@ try_compile (COMPAT_GETLINE
 		add_sources (elektra-full ${SOURCES})
 		add_headers (SOURCES)
 
-		configure_file (test ${CMAKE_CURRENT_BINARY_DIR}/test)
-
 		set (PLUGIN_NAME elektra-line)
 		add_library (${PLUGIN_NAME} MODULE ${SOURCES})
 		target_link_libraries (${PLUGIN_NAME} elektra)
+
+		install(DIRECTORY linetest DESTINATION ${TARGET_TEST_DATA_FOLDER})
 
 		install (TARGETS ${PLUGIN_NAME}
 			DESTINATION lib${LIB_SUFFIX}/${TARGET_PLUGIN_FOLDER})

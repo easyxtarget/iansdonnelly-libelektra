@@ -60,7 +60,7 @@ void test_readhosts()
 
 int main(int argc, char** argv)
 {
-	printf("MOUNT       TESTS\n");
+	printf("HOSTS        TESTS\n");
 	printf("==================\n\n");
 
 	init (argc, argv);
