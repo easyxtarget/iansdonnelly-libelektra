@@ -69,7 +69,7 @@ void test_key()
 	exit_if_fail( ksFromXMLfile(ks, srcdir_file("key.xml")) == 0, "ksFromXMLfile(key.xml) failed.");
 	counter = 0;
 	ksRewind(ks);
-	while ( (cur = ksNext(ks)) ) {
+	while (( (cur = ksNext(ks)) )) {
 		counter ++;
 		/* Prepend key root */	
 		//snprintf(buf, sizeof(buf), "%s/%s", root, keyName(cur));
@@ -170,7 +170,7 @@ void test_keyset()
 	exit_if_fail( ksFromXMLfile(ks, srcdir_file("keyset.xml")) == 0, "ksFromXMLfile(key.xml) failed.");
 	counter = 0;
 	ksRewind(ks);
-	while ( (cur = ksNext(ks)) ) {
+	while (( (cur = ksNext(ks)) )) {
 		counter ++;
 
 		/* Make tests ... */	

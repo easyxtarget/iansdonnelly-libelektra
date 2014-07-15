@@ -258,14 +258,14 @@ Ds_HASH_INLINE int Ds_ResizeHashTable(Ds_hash_table * restrict table,
          Ds_hash_entry * e, * t;
 
          e = table->buf[i];
-         while(e && (bucket = e->hash & (size - 1)) != i)
+         while((e && (bucket = e->hash & (size - 1)) != i))
          {
             t = e->next;
             e->next = table->buf[e->bucket = bucket];
             table->buf[bucket] = e;
             table->buf[i] = e = t;
          }
-         while(e && (t = e->next) != NULL)
+         while((e && (t = e->next) != NULL))
          {
             if((bucket = t->hash & (size - 1)) != i)
             {

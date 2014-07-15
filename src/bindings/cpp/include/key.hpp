@@ -161,6 +161,7 @@ public:
 
 	template <class T>
 	inline void setMeta(const std::string &metaName, T x);
+	inline void deleteMeta(const std::string &metaName);
 
 	inline void copyMeta(const Key &other, const std::string &metaName);
 	inline void copyAllMeta(const Key &other);
@@ -1045,6 +1046,11 @@ inline void Key::setMeta(const std::string &metaName, T x)
 	ckdb::keySetMeta(key, metaName.c_str(), k.getString().c_str());
 }
 
+inline void Key::deleteMeta(const std::string &metaName)
+{
+	ckdb::keySetMeta(key, metaName.c_str(), 0);
+}
+
 /**
  * @copydoc keyCopyMeta
  *
@@ -1094,7 +1100,7 @@ inline const Key Key::nextMeta()
  *
  * @code
  * k.rewindMeta();
- * while (meta = k.nextMeta())
+ * while ((meta = k.nextMeta()))
  * {
  * 	cout << meta.getName() << " " << meta.getString() << endl;
  * }

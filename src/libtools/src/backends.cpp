@@ -19,7 +19,7 @@ Backends::BackendInfoVector Backends::getBackendInfo(KeySet mountConf)
 	Key cur;
 
 	mountConf.rewind();
-	while (cur = mountConf.next())
+	while ((cur = mountConf.next()))
 	{
 		if (rootKey.isDirectBelow(cur))
 		{
