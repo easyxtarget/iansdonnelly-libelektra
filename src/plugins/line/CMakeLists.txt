@@ -10,6 +10,8 @@ try_compile (COMPAT_GETLINE
 		add_sources (elektra-full ${SOURCES})
 		add_headers (SOURCES)
 
+		configure_file (test ${CMAKE_CURRENT_BINARY_DIR}/test)
+
 		set (PLUGIN_NAME elektra-line)
 		add_library (${PLUGIN_NAME} MODULE ${SOURCES})
 		target_link_libraries (${PLUGIN_NAME} elektra)
@@ -20,4 +22,4 @@ try_compile (COMPAT_GETLINE
 		remove_plugin (line "Unable to use getline fucntion. Check libc version, should be higher than 4.6.27.")
 	endif (COMPAT_GETLINE)
 
-#add_plugintest (line)
+add_plugintest (line)
