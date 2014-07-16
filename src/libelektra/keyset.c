@@ -1548,7 +1548,7 @@ int f(KeySet *iterator, KeySet *lookup)
 	Key *current;
 
 	ksRewind(iterator);
-	while (current=ksNext(iterator))
+	while ((current=ksNext(iterator)))
 	{
 		key = ksLookup (lookup, current, KDB_O_POP);
 		// do something...
@@ -1784,7 +1784,7 @@ Key *ksLookupByName(KeySet *ks, const char *name, option_t options)
  * @par Example:
  * @code
 ksRewind(ks);
-while (key=ksLookupByString(ks,"my value",0))
+while ((key=ksLookupByString(ks,"my value",0)))
 {
 	// show all keys which value="my value"
 	keyToStream(key,stdout,0);

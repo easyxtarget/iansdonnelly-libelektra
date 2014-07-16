@@ -152,7 +152,7 @@ void MountCommand::getMountpoint(Cmdline const& cl)
 	std::vector <std::string> mountpoints;
 	mountpoints.push_back("system/elektra");
 	mountConf.rewind();
-	while (cur = mountConf.next())
+	while ((cur = mountConf.next()))
 	{
 		if (cur.getBaseName() == "mountpoint")
 		{
