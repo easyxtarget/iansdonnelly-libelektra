@@ -1,4 +1,4 @@
-- infos = Information about YAIL plugin is in keys below
+- infos = Information about HOSTS plugin is in keys below
 - infos/author = Markus Raab <elektra@libelektra.org>
 - infos/licence = BSD
 - infos/needs =

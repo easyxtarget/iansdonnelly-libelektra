@@ -1,4 +1,4 @@
-- infos = Information about YAIL plugin is in keys below
+- infos = Information about FSTAB plugin is in keys below
 - infos/author = Markus Raab <elektra@libelektra.org>
 - infos/licence = BSD
 - infos/needs =
