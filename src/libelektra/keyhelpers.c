@@ -60,7 +60,7 @@ int level=0;
 char buffer[20]; // TODO: make sure buffer size is ok
 
 p=keyName;
-while (*(p=keyNameGetOneLevel(p+size,&size)))
+while ((*(p=keyNameGetOneLevel(p+size,&size))))
 {
 	level++;
 
@@ -396,7 +396,7 @@ ssize_t keyGetParentNameSize(const Key *key)
 	size=0;
 	
 	/* iterate over level names */
-	while (*(p=keyNameGetOneLevel(p+size,&size))) parentNameEnd=p;
+	while ((*(p=keyNameGetOneLevel(p+size,&size)))) parentNameEnd=p;
 	
 	/* handle NULL or root key ("user" or "system") */
 	if (!parentNameEnd || parentNameEnd==key->key) return 0;

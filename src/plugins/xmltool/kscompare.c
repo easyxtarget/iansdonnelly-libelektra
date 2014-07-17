@@ -53,7 +53,7 @@ kdbSetKeys(ks1); // commit changed keys
 ksDel(ks1);  // don't need ks1 anymore
 
 // Remove all keys that disapeared from ks1...
-while (key=ksPop(removed)) {
+while ((key=ksPop(removed))) {
 	kdbRemoveKey(key);
 	keyDel(key);
 }

@@ -1886,7 +1886,7 @@ void test_keyHelpers()
 	 char *keyName="user////abc/def\\/ghi////jkl///";*/
 
 	p=name;
-	while (*(p=keyNameGetOneLevel(p+size,&size))) {
+	while ((*(p=keyNameGetOneLevel(p+size,&size)))) {
 		level++;
 
 		strncpy(buffer,p,size);
@@ -1909,7 +1909,7 @@ void test_keyHelpers()
 	level=0;
 
 	p=name;
-	while (*(p=keyNameGetOneLevel(p+size,&size))) {
+	while ((*(p=keyNameGetOneLevel(p+size,&size)))) {
 		level++;
 
 		strncpy(buffer,p,size);
@@ -1936,7 +1936,7 @@ void test_keyHelpers()
 	level=0;
 
 	p=name;
-	while (*(p=keyNameGetOneLevel(p+size,&size))) {
+	while ((*(p=keyNameGetOneLevel(p+size,&size)))) {
 		level++;
 
 		strncpy(buffer,p,size);
@@ -1963,7 +1963,7 @@ void test_keyHelpers()
 	level=0;
 
 	p=name;
-	while (*(p=keyNameGetOneLevel(p+size,&size))) {
+	while ((*(p=keyNameGetOneLevel(p+size,&size)))) {
 		level++;
 
 		strncpy(buffer,p,size);
