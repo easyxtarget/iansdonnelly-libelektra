@@ -18,10 +18,11 @@ void test_readline(){
 	Key * parentKey = keyNew ("user/tests/line", KEY_VALUE, filename, KEY_END);
 	KeySet *conf = 0;
 	PLUGIN_OPEN("line");
+	printf("%s\n", filename);
 
 	KeySet *ks=ksNew(0);
 	succeed_if (plugin->kdbGet(plugin, ks, parentKey) >= 1, "call to kdbGet was not successful");
-	Key *key = ksLookupByName(ks, "user/tests/line/line1", 0);
+	Key *key = ksLookupByName(ks, "user/tests/line/line01", 0);
 	exit_if_fail (key, "line1 key not found");
 	succeed_if (strcmp("test1", keyValue(key)) == 0, "line1 does not match");
 
@@ -31,7 +32,7 @@ void test_readline(){
 
 	key = ksLookupByName(ks, "user/tests/line/line14", 0);
 	exit_if_fail (key, "line14 key not found");
-	succeed_if (strcmp("printf(\"hello world\n\");", keyValue(key)) == 0, "line14 not correct");
+	succeed_if (strcmp("printf(\"hello world\\n\");", keyValue(key)) == 0, "line14 not correct");
 
 	ksDel (ks);
 	keyDel(parentKey);
