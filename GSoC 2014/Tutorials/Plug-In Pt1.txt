@@ -1,67 +1,20 @@
-First of all, all plug-ins use the same basic interface. This interface consists of five basic functions, elektraPluginOpen, elektraPluginGet, elektraPluginSet, elektraPluginError, and elektraPluginClose. Normally, the developer would replace 'Plugin' with the name of their plugin. So in the case of my plugin, the names of these functions would be elektraLineOpen(), elektraLineGet(), elektraLineSet(), elektraLineError(), and elektraLineClose().
+Hi Everybody!
 
-The kdb class relies on these functions for interacting with configuration files stored in the key database. A call to kdbOpen() will call the elektraPluginOpen() function for the plugin that was used to mount the configuration data. Similarly, calls for kdbGet() and kdbClose() will call the functions elektraPluginGet() and elektraPluginClose() respectively. The only exception is kdbSet() which calls elektraPluginSet() but also elektraPluginError() when an error occurs. The functions serve different purposes.
+For the first part of my Plug-In tutorial, I am going to cover the basic overview of an elektra plug-in. This post just explains the basic format and functions of an Elektra plug-in, specifically a storage plug-in (this will be the focus of my tutorial).
 
-elektraPluginOpen() is designed to allow each plug-in to do initialization if necessary.
+All plug-ins use the same basic interface. This interface consists of five basic functions, <a title="elektraPluginOpen" href="http://doc.libelektra.org/api/current/html/group__plugin.html#ga1a72ac76b618943677e00ed7ab50b372" target="_blank">elektraPluginOpen</a>, <a title="elektraPluginGet" href="http://doc.libelektra.org/api/current/html/group__plugin.html#ga2f14a12b205687a31e6fd0645470ec69" target="_blank">elektraPluginGet</a>, <a title="elektraPluginSet" href="http://doc.libelektra.org/api/current/html/group__plugin.html#ga01dd4018e48c3a091cb03940a7a8341f" target="_blank">elektraPluginSet</a>, <a title="elektraPluginError" href="http://doc.libelektra.org/api/current/html/group__plugin.html#gab0f8a88ee9868fb698b4e3040a70e000" target="_blank">elektraPluginError</a>, and <a title="elektraPluginClose" href="http://doc.libelektra.org/api/current/html/group__plugin.html#gaed8aeda2b2beab1b8052f8a64c601754" target="_blank">elektraPluginClose</a>. The developer replaces 'Plugin' with the name of their plugin. So in the case of my plugin, the names of these functions would be elektraLineOpen(), elektraLineGet(), elektraLineSet(), elektraLineError(), and elektraLineClose(). Additionally, there is one more function called <a title="ELEKTRA_PLUGIN_EXPORT" href="http://doc.libelektra.org/api/current/html/group__plugin.html#gabe78724d2d477eef39997fd9b85bff16" target="_blank">ELEKTRA_PLUGIN_EXPORT(Plugin)</a>, where once again 'Plugin" should be replaced with the name of the plug-in, this time in lower-case. So for my line plugin this function would be ELEKTRA_PLUGIN_EXPORT(line).
 
-elektraPluginGet() is designed to turn information from a configuration file into a usable KeySet, this is technically the only function that is REQUIRED in a plug-in.
+The KDB class relies on the first five functions for interacting with configuration files stored in the key database.  Calls for kdbGet() and kdbClose() will call the functions elektraPluginGet() and elektraPluginClose() respectively for the plugin that was used to mount the configuration data. kdbSet() calls elektraPluginSet() but also elektraPluginError() when an error occurs. elektraPluginOpen() is called before the first call of kdbGet() or kdbSet(). These functions serve different purposes that allow the plug-in to work.
+<ul>
+	<li>elektraPluginOpen() is designed to allow each plug-in to do initialization if necessary.</li>
+	<li>elektraPluginGet() is designed to turn information from a configuration file into a usable KeySet, this is technically the only function that is REQUIRED in a plug-in.</li>
+	<li>elektraPluginSet() is designed to store the information from the keyset back into a configuration file.</li>
+	<li>elektraPluginClose() is used to free resources that might be required for the plug-in.</li>
+	<li>ELEKTRA_PLUGIN_EXPORT(Plugin) simply lets Elektra know that the plug-in exists and what the name of the above functions are.</li>
+</ul>
+Most simply put: most plug-ins consist of five major functions, elektraPluginOpen(), elektraPluginClose(), elektraPluginGet(), elektraPluginSet(), and ELEKTRA_EXPORT_PLUGIN(Plugin).
 
-elektraPluginSet() is designed to store the information from the keyset back into a configuration file.
-
-elektraPluginClose() is used to free resources that might be required for the plug-in.
-
-Most simply put: most plug-ins consist of four major functions, elektraPluginOpen(), elektraPluginClose(), elektraPluginGet(), and elektraPluginSet().
-
-The next step to writing a plug-in is the contract. The contract basically just describes the plug-in. The main part of the contract describes to Elektra how it will modify the KeySet <em>returned. </em>This is what allows Elektra to work with various types of plug-ins. This guide will focus on one type of plug-in: the <em>storage</em> plug-in.
-
-We already have <a title="documentation on plug-ins in our repository" href="https://github.com/ElektraInitiative/libelektra/blob/master/doc/CONTRACT.ini" target="_blank">documentation on plug-ins on our repository</a> but I will reiterate the details here. The first part of the contract you will need is the system/elektra/modules/Plugin (where Plugin represents the name of your plug-in). All this key does is let elektra know that your plug-in exists. The next key is system/elektra/modules/Plugin/exports. This key lets elektra know that your plug-in exports symbols to Elektra. Below this key you need to create keys for each function you want to export, in my line plug-in I implemented functions for get and set so I will create two keys as follows:<code>
-keyNew ("system/elektra/modules/line/exports/get",
-KEY_FUNC, elektraLineGet, KEY_END),
-keyNew ("system/elektra/modules/line/exports/set",
-KEY_FUNC, elektraLineSet, KEY_END),
-</code>
-
-So far we have told Elektra that our plugin exists and will be exporting functions for getting and setting keys. The next set of keys are the system/elektra/Plugin/infos keys. These are pretty self-explanatory. The first three children of this key, author, license, and description are pretty self explanatory. The infos/provides key tells Elektra the type of plug-in that is being used, this will be "storage" for any storage plug-in (which is what this tutorial focuses on). The info/placements key tells Elektra which functions of the plug-in it should call. Since I implemented get and set in the line plug-in, I would set this key to "getstorage setstorage". Next is infos/needs and infos/reccommends, infos/needs should contain a list of plug-ins or providers that your plug-in needs to work. Otherwise this key needs to be sent to be blank "". infos/recommends works exactly like needs except that a plug-in that needs another plug-in won't be compiled if the other plug-in doesn't exist but if it only recommends having the other plug-in, it will still compile in the others absence.
-
-Since elektraPluginGet() is the only required function of a plug-in, this is where the plug-in's contract get exported into the Elektra key database. In my plugin, line, here is the contract is exported:
-<code>int elektraLineGet(Plugin *handle ELEKTRA_UNUSED, KeySet *returned, Key *parentKey)
- {
- //Export the contract
- if (!strcmp (keyName(parentKey), "system/elektra/modules/line"))
- {
- KeySet *moduleConfig = ksNew (30,
- keyNew ("system/elektra/modules/line",
- KEY_VALUE, "line plugin waits for your orders", KEY_END), 
- keyNew ("system/elektra/modules/line/exports", KEY_END),
- keyNew ("system/elektra/modules/line/exports/get", //Specify which function to use for get
- KEY_FUNC, elektraLineGet, KEY_END),
- keyNew ("system/elektra/modules/line/exports/set", //Specify function to use for set
- KEY_FUNC, elektraLineSet, KEY_END),
- keyNew ("system/elektra/modules/line/infos",
- KEY_VALUE, "All information you want to know", KEY_END),
- keyNew ("system/elektra/modules/line/infos/author",
- KEY_VALUE, "Ian Donnelly &lt;ian.s.donnelly@gmail.com&gt;", KEY_END),
- keyNew ("system/elektra/modules/line/infos/licence",
- KEY_VALUE, "BSD", KEY_END),
- keyNew ("system/elektra/modules/line/infos/description",
- KEY_VALUE, "Very simple storage which writes out line by line", KEY_END),
- keyNew ("system/elektra/modules/line/infos/provides", //The type of plugin (should probably be storage)
- KEY_VALUE, "storage", KEY_END),
- keyNew ("system/elektra/modules/line/infos/placements", //Because this plugin is a storage plugin that impliments get and set
- KEY_VALUE, "getstorage setstorage", KEY_END),
- keyNew ("system/elektra/modules/line/infos/needs",
- KEY_VALUE, "", KEY_END),
- keyNew ("system/elektra/modules/line/infos/version",
- KEY_VALUE, PLUGINVERSION, KEY_END),
- KS_END);
- ksAppend (returned, moduleConfig);
- ksDel (moduleConfig);
- return 1;
- }
- return 1; /* success */
- }</code>
-So Part 1 of the tutorial covers the implementation details for a plug-in as well as the basics of the plug-in contract. For more information about plug-ins and more detailed examples I highly suggest reading <a title="Markus' Thesis for Elektra" href="www.libelektra.org/ftp/elektra/thesis.pdf" target="_blank">Markus' Thesis for Elektra.</a> Chapter 4, which starts on page 61 goes into much more detail on Plug-Ins and explains the various features of the contracts. Look for Part 2 soon!
+So Part 1 of the tutorial covers the implementation details for a plug-in. Next up will be Part 2, which will cover the theory behind contracts in Elektra as well as how to implement them.
 
 Sincerely,
-
-Ian
+Ian S. Donnelly
