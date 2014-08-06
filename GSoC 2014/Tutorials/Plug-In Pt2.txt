@@ -1,0 +1,64 @@
+Hi Everybody!
+
+This is the second installment of my tutorial, <em><a title="How-To: Write a Plug-In" href="http://community.libelektra.org/wp/?p=45">How-To: Write a Plug-In.</a> </em>Previously, in <a title="Part 1, The Basics" href="http://community.libelektra.org/wp/?p=51 ">Part 1</a>, I went over the basic interface of an Elektra Storage Plug-In. For this installment, I will be focusing on one of the most important aspects of a plug-in, its contract.
+
+The contract describes how a plug-in may behave. The main part of the contract describes to Elektra how it will modify the KeySet <em>returned. </em>This is what allows Elektra to work with various types of plug-ins. This guide will focus on one type of plug-in: the <em>storage</em> plug-in.
+
+We already have <a title="a specification for plug-ins in our repository" href="https://github.com/ElektraInitiative/libelektra/blob/master/doc/CONTRACT.ini" target="_blank">a published specification for plug-ins on our repository</a> but I will reiterate the details here. The first part of the contract you will need is the system/elektra/modules/plugin (where plugin represents the name of your plug-in). All this key does is let elektra know that your plug-in exists. The next key is system/elektra/modules/plugin/exports. This key lets Elektra know that your plug-in exports symbols to Elektra. Below this key you need to create keys for each function you want to export, in my line plug-in I implemented functions for get and set so I will create two keys as follows:<code>
+keyNew ("system/elektra/modules/line/exports/get",
+KEY_FUNC, elektraLineGet, KEY_END),
+keyNew ("system/elektra/modules/line/exports/set",
+KEY_FUNC, elektraLineSet, KEY_END),
+</code>So far we have told Elektra that our plugin exists and will be exporting functions for getting and setting keys.
+
+The next set of keys are the system/elektra/Plugin/infos keys. These are pretty self-explanatory. The first three children of this key, author, license, and description are pretty self explanatory. The infos/provides key tells Elektra the type of plug-in that is being used, this will be "storage" for any storage plug-in (which is what this tutorial focuses on). To be precise, it tells Elektra which abstract functionality is provided. This allows other plugins to reference abstract functionality instead of declaring a hard dependency to one specific plugin. For example plugins could state that they want to be placed before any other plugin doing the abstract functionality "conversion" instead of referencing for example the keytometa plugin directly.
+
+The info/placements key tells Elektra which functions of the plug-in it should call. Since I implemented get and set in the line plug-in, I would set this key to "getstorage setstorage". Next is infos/needs and infos/recommends, infos/needs should contain a list of plug-ins or providers that your plug-in needs to work (see the info/provides key above). Otherwise this key needs to be set to be blank "". infos/recommends works exactly like needs except that a plug-in that needs another plug-in won't form a valid backend if the other plug-in doesn't exist but if it only recommends having the other plug-in, it will still work in the others absence.
+
+Since Elektra 0.8.7, the best practice for creating a plug-in involves storing the info keys at the very top of a file named REAMDE.md in the same directory as the plugin source. For instance, in my line plugin, the first few lines of README.md are as follows:
+<code>- infos = Information about LINE plugin is in keys below
+- infos/author = Ian Donnelly &lt;ian.s.donnelly@gmail.com&gt;
+- infos/licence = BSD
+- infos/needs =
+- infos/provides = storage
+- infos/placements = getstorage setstorage
+- infos/description = Very simple storage plug-in which stores each line from a file as a key</code>
+
+The rest of the README.md file should contain an English description of the plug-in. You can include an introduction to the plug-in, its purpose, any shortcomings it may have, and examples of how to use it. This README.md file is standard for GitHub which will automatically be displayed when a user is browsing your plug-in's directory in the repo. It is written in Markdown.
+
+In order to generate the contract from this file you must edit the CMakeLists.txt file in your plug-in source directory to include the following lines:<code>
+generate_readme (plugin)
+add_includes (elektra-full ${CMAKE_CURRENT_BINARY_DIR})
+include_directories (${CMAKE_CURRENT_BINARY_DIR})</code>
+where you substitute <em>plugin</em> with the name of you plugin. This will generate a file called readme_plugin.c (once again, substitute plugin), in your plugin's build directory when you run the make command.
+
+Since elektraPluginGet() is the only required function of a plug-in, this is where the plug-in's contract get exported into the Elektra key database. This is the contract declaration for my line plug-in:
+<code>int elektraLineGet(Plugin *handle ELEKTRA_UNUSED, KeySet *returned, Key *parentKey)
+{
+//Export the contract
+if (!strcmp (keyName(parentKey), "system/elektra/modules/line"))
+{
+KeySet *moduleConfig = ksNew (30,
+keyNew ("system/elektra/modules/line",
+KEY_VALUE, "line plugin waits for your orders", KEY_END),
+keyNew ("system/elektra/modules/line/exports", KEY_END),
+keyNew ("system/elektra/modules/line/exports/get", //Specify which function to use for get
+KEY_FUNC, elektraLineGet, KEY_END),
+keyNew ("system/elektra/modules/line/exports/set", //Specify function to use for set
+KEY_FUNC, elektraLineSet, KEY_END),
+#include "readme_line.c"
+keyNew ("system/elektra/modules/line/infos/version",
+KEY_VALUE, PLUGINVERSION, KEY_END),
+KS_END);</code>
+<code><span style="font-family: Thread-00000b18-Id-0000000b; font-size: medium;">   </span>ksAppend (returned, moduleConfig);
+ksDel (moduleConfig);
+return 1;
+}
+return 1; /* success */
+}</code>
+
+Note that the plugin contract is nothing special, but just a KeySet interpreted by the resolver forming an Elektra backend. Elektra will request the keys below system/elektra/modules/plugin (where plugin is the pluginname) as soon as it wants to know something about that plugin.
+
+Notice also the line <code>#include "readme_line.c"</code>. This line, pulls in the contents of readme_line.c in my plug-in's build directory, which due to the lines we added in CMakeLists.txt will contain the contract as defined at the top of README.md. Any changes to the keys in README.md will be reflected in the plug-in next time it is built.
+
+Part 2 of this tutorial focuses on the plug-in contract by explaining what each element does and explaining how to implement a contract.  For more information about plug-ins and more detailed examples I highly suggest reading <a title="Markus' Thesis for Elektra" href="www.libelektra.org/ftp/elektra/thesis.pdf" target="_blank">Markus' Thesis for Elektra.</a> Chapter 4, which starts on page 61 goes into much more detail on Plug-Ins and explains the various features of the contracts. Look for Part 3 soon!
