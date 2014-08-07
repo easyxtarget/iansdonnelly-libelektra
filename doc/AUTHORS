@@ -1,4 +1,4 @@
-List of authors that contributed to Elektra.
+The list of authors that contributed to Elektra.
 
 
 Markus Raab <elektra@markus-raab.org>
@@ -36,6 +36,7 @@ Felix Berlakovich <elektra@berlakovich.net>
 journald plugin, augeas plugin, keytometa, main development
 Devel/Test on: Debian Wheezy
 
+
 Andreas Rottmann <rotty@debian.org>
 Debian packaging
 Bindings: scheme
@@ -63,3 +64,6 @@ Pino Toscano <pino@kde.org>
 Debian Packaging, Documentation
 
 
+Ian S. Donnelly <ian.s.donnelly@gmail.com>
+Google Summer of Code 2014
+Devel/Test on: Debian Stable
