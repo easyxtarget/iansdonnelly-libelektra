@@ -1,0 +1,27 @@
+diff -Naur samba_orig/samba-3.6.6/debian/samba-common.postinst samba/samba-3.6.6/debian/samba-common.postinst
+--- samba_orig/samba-3.6.6/debian/samba-common.postinst	2014-06-22 07:18:20.000000000 -0400
++++ samba/samba-3.6.6/debian/samba-common.postinst	2014-08-14 23:20:16.011761349 -0400
+@@ -89,7 +89,11 @@
+ 	' "$CONFIG" >> "$NEWFILE"
+ fi
+ 
+-ucf --three-way --debconf-ok "$NEWFILE" "$CONFIG"
++if [ -z "$2" ]; then
++	kdb mount "$CONFIG" system/samba/smb ini
++fi
++
++ucf --three-way --threeway-merge-command elektra-merge --debconf-ok "$NEWFILE" "$CONFIG"
+ 
+ if [ ! -e "$CONFIG" ]; then
+ 	echo "Install/upgrade will fail. To recover, please try:"
+diff -Naur samba_orig/samba-3.6.6/debian/samba-common.postrm samba/samba-3.6.6/debian/samba-common.postrm
+--- samba_orig/samba-3.6.6/debian/samba-common.postrm	2014-06-22 07:18:20.000000000 -0400
++++ samba/samba-3.6.6/debian/samba-common.postrm	2014-08-14 21:12:25.253726643 -0400
+@@ -2,6 +2,7 @@
+ 
+ set -e
+ if [ "$1" = purge ]; then
++	kdb umount system_samba_smb
+ 	rm -rf /etc/samba/ /var/cache/samba/ /var/lib/samba/ /var/run/samba/
+ 	if [ -x "`which ucf 2>/dev/null`" ]; then
+ 		ucf --purge /etc/samba/smb.conf
