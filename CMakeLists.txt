@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.8)
+cmake_minimum_required (VERSION 2.8.8)
 
 project (Elektra)
 
@@ -71,13 +71,13 @@ if (BUILD_TESTING)
 	endif (BUILD_FULL OR BUILD_STATIC)
 endif (BUILD_TESTING)
 
-if (BUILD_FULL OR BUILD_STATIC)
-	if (BUILD_EXAMPLES)
+if (BUILD_EXAMPLES)
+	if (BUILD_FULL OR BUILD_STATIC)
 		add_subdirectory (examples)
-	else (BUILD_EXAMPLES)
+	else (BUILD_FULL OR BUILD_STATIC)
 		message(WARNING "Requested to build examples, but is impossible because neither full or static build active")
-	endif (BUILD_EXAMPLES)
-endif (BUILD_FULL OR BUILD_STATIC)
+	endif (BUILD_FULL OR BUILD_STATIC)
+endif (BUILD_EXAMPLES)
 
 if (BUILD_FULL OR BUILD_STATIC)
 	add_subdirectory (benchmarks)

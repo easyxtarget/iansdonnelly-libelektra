@@ -24,7 +24,10 @@ endif()
 #
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 	#older clang did not support non-pod-varargs (will compile, but crash if used)
-	set (EXTRA_FLAGS "${EXTRA_FLAGS} -Wno-error=non-pod-varargs")
+	#so simply avoid to use it
+	#icc also crashes (but just warns, no error)
+	#set (EXTRA_FLAGS "${EXTRA_FLAGS} -Wno-error=non-pod-varargs")
+
 	#not supported by icc:
 	set (EXTRA_FLAGS "${EXTRA_FLAGS} -Wno-deprecated-declarations")
 	message (STATUS "Clang detected")
@@ -71,22 +74,12 @@ if (ENABLE_COVERAGE)
 endif (ENABLE_COVERAGE)
 
 
-if (CMAKE_PIC_FLAGS)
-	message(STATUS "Will use pic flags: ${CMAKE_PIC_FLAGS}")
-else()
-	set (CMAKE_PIC_FLAGS "-fPIC")
-endif()
-
-if (CMAKE_STATIC_FLAGS)
-	message(STATUS "Will use static flags: ${CMAKE_STATIC_FLAGS}")
-endif()
-
 
 #
 # Merge all flags
 #
 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${C_STD} ${EXTRA_FLAGS} ${COMMON_FLAGS} -Wsign-compare -Wfloat-equal -Wformat-security")
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_STD} ${EXTRA_FLAGS} ${COMMON_FLAGS} -Wno-missing-field-initializers")
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_STD} ${EXTRA_FLAGS} ${COMMON_FLAGS} -Wno-missing-field-initializers -Wstrict-null-sentinel")
 
 message (STATUS "C flags are ${CMAKE_C_FLAGS}")
 message (STATUS "CXX flags are ${CMAKE_CXX_FLAGS}")

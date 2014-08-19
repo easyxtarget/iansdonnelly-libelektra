@@ -31,7 +31,16 @@ public:
 	inline KeySet(ckdb::KeySet *k);
 	inline KeySet(const KeySet &other);
 
-	inline explicit KeySet(size_t alloc, va_list ap);
+	class Hints
+	{
+	public:
+		explicit Hints(size_t a) : m_alloc(a) {}
+		size_t alloc() {return m_alloc;}
+	private:
+		size_t m_alloc;
+	};
+
+	inline explicit KeySet(Hints hints, va_list ap);
 	inline explicit KeySet(size_t alloc, ...);
 
 	inline ~KeySet ();
@@ -347,7 +356,7 @@ inline KeySet::const_reverse_iterator KeySet::crend() const noexcept
  * @copydoc ksNew
  */
 inline KeySet::KeySet () :
-	ks (ckdb::ksNew(0))
+	ks (ckdb::ksNew(0, KS_END))
 {}
 
 /**
@@ -390,9 +399,9 @@ inline KeySet::KeySet (const KeySet &other)
  *
  * @copydoc ksVNew
  */
-inline KeySet::KeySet (size_t alloc, va_list ap)
+inline KeySet::KeySet (KeySet::Hints hints, va_list ap)
 {
-	ks = ckdb::ksVNew (alloc, ap);
+	ks = ckdb::ksVNew (hints.alloc(), ap);
 }
 
 /**
@@ -429,7 +438,7 @@ inline KeySet::~KeySet ()
 inline ckdb::KeySet * KeySet::release()
 {
 	ckdb::KeySet *ret = ks;
-	ks = ckdb::ksNew(0);
+	ks = ckdb::ksNew(0, KS_END);
 	return ret;
 }
 

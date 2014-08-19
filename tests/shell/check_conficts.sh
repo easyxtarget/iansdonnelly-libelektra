@@ -4,6 +4,28 @@ echo
 echo ELEKTRA CHECK CONFLICTS SCRIPTS TESTS
 echo
 
+TTY=`tty`
+
+echo -n "Searching for tty: "
+tty
+RET=$?
+
+#needed to have job control:
+# set: can't access tty; job control turned off
+if [ $RET -eq 0 ]; then
+	if [ -w "$TTY" ]; then
+		echo "tty found successfully and is writeable"
+	else
+		echo "tty found, but tty is not writeable"
+		exit 1
+	fi
+else
+	echo "no tty found, wont run test"
+	exit 0
+fi
+
+set -m
+
 check_version
 
 # simulates a config file
@@ -25,9 +47,6 @@ cleanup()
     rm -f $FILE
     rm -f $ERRORFILE
 }
-
-#needed to have job control:
-set -m
 
 
 if is_plugin_available $PLUGIN
