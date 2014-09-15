@@ -16,7 +16,9 @@
 
 #include <tests_internal.h>
 
-#include <kdbtools.h>
+#include "kdbtools.h"
+
+#include <unistd.h>
 
 void test_readwrite()
 {

@@ -44,6 +44,7 @@
 
 #include <sys/types.h>
 #include <dirent.h>
+#include <kdberrors.h>
 
 #ifdef ELEKTRA_CONFLICT_DEBUG
 //has stop signals at certain points to let you test
@@ -512,9 +513,11 @@ static int elektraSetCommit(resolverHandle *pk, Key *parentKey)
 	{
 		char buffer[ERROR_SIZE];
 		strerror_r(errno, buffer, ERROR_SIZE);
-		ELEKTRA_ADD_WARNING (88, parentKey, buffer);
+		ELEKTRA_ADD_WARNINGF(88, parentKey,
+			"Could not sync directory %s because %s",
+			pk->dirname, buffer);
 	}
-	closedir(dirp); // TODO: check for error?
+	closedir(dirp);
 
 	return ret;
 }

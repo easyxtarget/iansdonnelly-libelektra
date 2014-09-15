@@ -4,8 +4,15 @@
 
 #include "noresolver.h"
 
-int elektraNoresolverCheckFile(const char * f ELEKTRA_UNUSED)
+/**
+ * @retval 1 on success (Relative path)
+ * @retval 0 on success (Absolute path)
+ * @retval never -1 (success guaranteed)
+ */
+int elektraNoresolverCheckFile(const char * filename)
 {
+	if (filename[0] == '/') return 0;
+
 	return 1;
 }
 
@@ -27,20 +34,7 @@ static KeySet * elektraNoresolverModules()
 		keyNew ("system/elektra/modules/" ELEKTRA_PLUGIN_NAME "/exports/checkfile",
 			KEY_FUNC, elektraNoresolverCheckFile,
 			KEY_END),
-		keyNew ("system/elektra/modules/" ELEKTRA_PLUGIN_NAME "/infos",
-			KEY_VALUE, "All information you want to know are in keys below", KEY_END),
-		keyNew ("system/elektra/modules/" ELEKTRA_PLUGIN_NAME "/infos/author",
-			KEY_VALUE, "Markus Raab <elektra@markus-raab.org>", KEY_END),
-		keyNew ("system/elektra/modules/" ELEKTRA_PLUGIN_NAME "/infos/licence",
-			KEY_VALUE, "BSD", KEY_END),
-		keyNew ("system/elektra/modules/" ELEKTRA_PLUGIN_NAME "/infos/description",
-			KEY_VALUE, "The " ELEKTRA_PLUGIN_NAME " just does nothing instead of resolving file names.\n" ,KEY_END),
-		keyNew ("system/elektra/modules/" ELEKTRA_PLUGIN_NAME "/infos/provides",
-			KEY_VALUE, "resolver", KEY_END),
-		keyNew ("system/elektra/modules/" ELEKTRA_PLUGIN_NAME "/infos/placements",
-			KEY_VALUE, "rollback getresolver setresolver commit", KEY_END),
-		keyNew ("system/elektra/modules/" ELEKTRA_PLUGIN_NAME "/infos/needs",
-			KEY_VALUE, "", KEY_END),
+#include ELEKTRA_README(noresolver)
 		keyNew ("system/elektra/modules/" ELEKTRA_PLUGIN_NAME "/infos/version",
 			KEY_VALUE, PLUGINVERSION, KEY_END),
 		KS_END);
