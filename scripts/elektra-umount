@@ -1,4 +1,10 @@
 #!/bin/bash
+#
+# @author Felix Berlakovich <elektra@berlakovich.net>
+# @brief Unmounts a file from the key database
+# @date 14.08.2014
+# @tags mount, unmount, keyset
+#
 
 help()
 {
