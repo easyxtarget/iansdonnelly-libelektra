@@ -1,5 +1,12 @@
 #!/bin/sh
 
+#
+# @author Avi Alkalay <avi@unix.sh>
+# @brief Creates a keyset equivalent to /etc/{passwd,group,shadow}
+# @date 01.03.2004
+# @tags passwd, group, shadow, convert
+#
+
 ########################################################################
 ##
 ## This script will read the /etc/{passwd,group,shadow} and create an
