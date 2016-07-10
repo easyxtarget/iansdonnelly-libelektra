@@ -1,4 +1,10 @@
 #!/bin/sh
+#
+# @author Avi Alkalay <avi@unix.sh>
+# @brief Creates a keyset equivalent to /etc/fstab
+# @date 01.04.2004
+# @tags fstab, convert
+#
 
 ########################################################################
 ##
