@@ -1,5 +1,12 @@
 #!/bin/sh
 
+#
+# @author Avi Alkalay <avi@unix.sh>
+# @brief Creates a keyset equivalent to /etc/inittab
+# @date 01.03.2004
+# @tags init, inittab, convert
+#
+
 ########################################################################
 ##
 ## This script will read the /etc/inittab and create an
