@@ -1,4 +1,12 @@
 #!/bin/bash
+#
+# @author Felix Berlakovich <elektra@berlakovich.net>
+# @brief Performs a three-way merge of keysets
+# @date 12.08.2014
+# @tags merge, keyset
+#
+
+{passwd,group,shadow}
 
 ours=$1
 base=$2
