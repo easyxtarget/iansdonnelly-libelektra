@@ -1,4 +1,10 @@
 #!/bin/bash
+#
+# @author Felix Berlakovich <elektra@berlakovich.net>
+# @brief Mounts a file into the key database using the specified plugins.
+# @date 14.08.2014
+# @tags mount, keyset
+#
 
 help()
 {
