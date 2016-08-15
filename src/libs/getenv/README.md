@@ -10,6 +10,16 @@ elektrify-getenv(1) -- elektrify the environment of applications
 `elektrify-getenv` <application> <options>
 
 
+## EXAMPLE
+
+    kdb elektrify-getenv curl --elektra-version
+    kdb elektrify-getenv curl http://www.libelektra.org
+    kdb set system/env/override/HTTP_PROXY http://proxy.hogege.com:8000/
+    kdb elektrify-getenv curl http://www.libelektra.org
+
+By using `elektrify-getenv` the last curl invocation will use a different http proxy.
+
+
 ## DESCRIPTION
 
 When an application is elektrified using libelektragetenv,
@@ -23,7 +33,7 @@ Its main purpose is to:
 - allow a hierarchical structure for environment
 - allow settings to only apply for individual applications or only in special context
 - still preserve the advantages (inheriting of environment to subprocesses)
-- Availability in at, cron and similar scripts.
+- availability of same environment in at, cron and similar scripts
 
 It is implemented using a LD_PRELOAD technique, see [USAGE](#USAGE) below for
 global activation.
@@ -142,6 +152,15 @@ E.g. to have a different home directory for any user and application:
     kdb set user/env/layer/user markus
     kdb set user/users/markus/konqueror/HOME /home/download
     kdb setmeta spec/env/override/HOME context  /users/%user%/%name%/HOME
+
+Or to have a different lock/suspend program per computer (that all have the same config):
+
+    kdb mount-info system/env/info            # must be below /env to be available
+    kdb setmeta spec/env/layer/hostname override/#0 system/env/info/uname/nodename
+    kdb setmeta spec/env/override/lock context /env/info/lock/%hostname%
+    kdb set user/env/info/lock/computer1 "systemctl suspend -i
+    kdb set user/env/info/lock/computer2 "xset dpms force off && xtrlock"
+    `kdb getenv lock`  # call the appropriate lock method for the current computer
 
 
 

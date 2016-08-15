@@ -27,6 +27,7 @@ section here.
 - [CMake spec](cmake_spec.md)
 - [Definition of Bool](bool.md)
 - [Global Plugins](global_plugins.md)
+- [Logging](logging.md)
 
 ## Drafts
 
@@ -34,3 +35,4 @@ section here.
 - [Script Testing](script_testing.md)
 - [Null Pointer Checks](null_pointer_checks.md)
 - [Publish Subscribe](pubsub.md)
+- [Global Validation](global_validation.md)

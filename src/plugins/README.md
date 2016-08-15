@@ -67,7 +67,7 @@ determined (will be automatically added by kdb mount):
 - [resolver](resolver/) uses POSIX APIs to handle conflicts gracefully
 - [wresolver](wresolver/) minimalistic resolver for non-POSIX systems
 - [noresolver](noresolver/) does not resolve, but can act as one
-
+- [gitresolver](gitresolver/) checks out and commits files to a local git repository
 and afterwards the configuration file must be synced with
 harddisc (recommended to add at every kdb mount):
 
@@ -106,6 +106,7 @@ productive use:
 - [regexstore](regexstore/)
 - [simpleini](simpleini/) is ini without sections
 - [csvstorage](csvstorage/) for csv files
+- [passwd](passwd/) read/write passwd files
 
 ## System Information ##
 
@@ -114,6 +115,8 @@ Information compiled in Elektra:
   core so that it cannot give wrong version information
 - [constants](constants/) various constants, including version
   information
+- [desktop](desktop/) contains information which desktop is
+  currently running
 
 Providing information found on the system not available in persistent
 files:

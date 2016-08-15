@@ -11,11 +11,6 @@ and tools regarding configuration tasks. Elektra abstracts from
 cross-platform-related issues and allows applications to be aware of other
 applications' configurations, leveraging easy application integration.
 
-## Current News
-
-- Please [fill out survey](http://elektra.limequery.org/625192)
-- [14 Jun 2016 0.8.17](http://doc.libelektra.org/news/e6153a39-c4bd-41c3-bc86-785d451eb6c5.html) survey, usability improvements
-
 ## Overview
 
 Elektra consists of three parts:
@@ -243,8 +238,8 @@ To use the debian repository of the latest builds from master put following file
 /etc/apt/sources.list.
 For jessie:
 
-        deb     [trusted=yes] http://194.117.254.29/elektra-stable/ jessie main
-        deb-src [trusted=yes] http://194.117.254.29/elektra-stable/ jessie main
+        deb     [trusted=yes] http://debian-stable.libelektra.org/elektra-stable/ jessie main
+        deb-src [trusted=yes] http://debian-stable.libelektra.org/elektra-stable/ jessie main
 
 For wheezy:
 
@@ -253,7 +248,7 @@ For wheezy:
 
 
 
-## Develop ##
+## Contributing ##
 
 To start development, just clone the repo and start hacking!
 We prepared [beginner friendly tasks](https://github.com/ElektraInitiative/libelektra/issues?q=is%3Aissue+is%3Aopen+label%3A%22beginner+friendly%22)
@@ -261,13 +256,8 @@ for you.
 
 - We encourage you to improve documentation, especially the README.md
   as if they were a webpage.
-- You should read the [coding document](doc/CODING.md) before you issue a
-  pull request.
-- Make yourself familiar with the [KeySet](/doc/help/elektra-data-structures.md)
-  (also in the [API docu](http://doc.libelektra.org/api/latest/html/group__keyset.html))
-  the central data structure in Elektra.
-- You should read the [design document](doc/DESIGN.md) before you make
-  design relevant decisions.
 - In the source code, you should look into [libs](src/libs/) and [plugins](/src/plugins/).
 - You can always peek into the [TODOs](doc/todo), if you don't know
   what to do.
+- You should read the [CONTRIBUTING](.github/CONTRIBUTING.md) before you issue a
+  pull request.
