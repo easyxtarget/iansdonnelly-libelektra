@@ -1,4 +1,9 @@
 #!/bin/sh
+#
+# @author Mihael Pranjić
+# @brief Benchmarks library spilt
+# @date 14.02.2016
+# @tags benchmark, libsplit
 
 if [ -z "$KDB" ]; then
 	KDB=kdb
