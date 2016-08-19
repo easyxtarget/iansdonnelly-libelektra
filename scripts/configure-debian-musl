@@ -1,4 +1,9 @@
 #!/bin/sh
+#
+# @author Markus Raab <elektra@markus-raab.org>
+# @brief Configure a debian build using musl
+# @date 22.01.2016
+# @tags configure, debian, musl
 
 . "$(dirname "$0")/configure-common"
 
