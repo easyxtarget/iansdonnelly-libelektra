@@ -1,4 +1,9 @@
 #!/bin/sh
+#
+# @author Markus Raab <elektra@markus-raab.org>
+# @brief Configure a debian wheezy build
+# @date 30.10.2014
+# @tags configure, debian, wheezy
 
 . "$(dirname "$0")/configure-common"
 

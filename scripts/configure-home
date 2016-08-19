@@ -1,4 +1,9 @@
 #!/bin/sh
+#
+# @author Markus Raab <elektra@markus-raab.org>
+# @brief Config script where files are stored in home directory
+# @date 13.05.2016
+# @tags configure, home
 
 # a variant where everything is in a home-directory
 # below .config by default
