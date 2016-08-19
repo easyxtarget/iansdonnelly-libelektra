@@ -1,4 +1,9 @@
 #!/bin/sh
+#
+# @author Markus Raab <elektra@markus-raab.org>
+# @brief Configuration script for configuration stored in .ini format.
+# @date 16.02.2016
+# @tags configure, ini
 
 . "$(dirname "$0")/configure-common"
 
