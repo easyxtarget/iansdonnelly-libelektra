@@ -1,4 +1,9 @@
 #!/bin/sh
+#
+# @author Manuel Mausz
+# @brief Configure a build for mingw-w64
+# @date 12.09.2015
+# @tags configure, mingw, mingw-w64
 
 . "$(dirname "$0")/configure-common"
 
