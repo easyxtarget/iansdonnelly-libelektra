@@ -1,4 +1,10 @@
 #!/bin/sh
+#
+# @author Felix Berlakovich <elektra@berlakovich.net>
+# @brief Benchmarks different hosts mountpoints
+# @date 21.02.2016
+# @tags benchmark, hosts, augeas, mountpoint
+#
 
 if [ -z "$KDB" ]; then
     KDB=kdb
